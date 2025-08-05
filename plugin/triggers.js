@@ -144,6 +144,9 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       if (value === 'anchored') {
         return appendLog('Anchored', {
           end: true,
+          'custom.logbook.maxSpeed': 0,
+          'custom.logbook.maxWind':  0,
+          'custom.logbook.maxHeel':  0
         });
       }
       if (value === 'sailing') {
@@ -173,6 +176,9 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       if (value === 'moored') {
         return appendLog('Stopped', {
           end: true,
+          'custom.logbook.maxSpeed': 0,
+          'custom.logbook.maxWind':  0,
+          'custom.logbook.maxHeel':  0
         });
       }
       break;
