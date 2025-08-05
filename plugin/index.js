@@ -68,6 +68,7 @@ module.exports = (app) => {
     'navigation.courseOverGroundTrue',
     'navigation.speedThroughWater',
     'navigation.speedOverGround',
+    'navigation.attitude.roll',      // NEW: heel/roll in radians
     'navigation.log',
     'navigation.courseRhumbline.nextPoint.position',
     'environment.outside.pressure',
