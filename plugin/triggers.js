@@ -1,6 +1,15 @@
 const ordinal = require('ordinal');
 const stateToEntry = require('./format');
 
+// convert m/s to knots
+function toKnots(mps) {
+  return mps * 1.943844;  // 1 m/s ≈ 1.9438 kt
+}
+// convert radians to degrees
+function radToDeg(rad) {
+  return rad * 180 / Math.PI;
+}
+
 function isUnderWay(state) {
   if (state['navigation.state'] === 'sailing') {
     return true;
@@ -59,6 +68,51 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
   }
 
   switch (path) {
+    case 'navigation.speedOverGround':
+    case 'navigation.speedThroughWater': {
+      // new high speed record (value in m/s)
+      const currentMax = oldState['custom.logbook.maxSpeed'] || 0;
+      if (typeof value === 'number' && value > currentMax) {
+        const speedKn = toKnots(value).toFixed(1);
+        return appendLog(`New speed record: ${speedKn} kt`, {
+          'custom.logbook.maxSpeed': value,
+        });
+      }
+      break;
+    }
+    case 'environment.wind.speedOverGround': {
+      // new high wind speed
+      const currentMaxWind = oldState['custom.logbook.maxWind'] || 0;
+      if (typeof value === 'number' && value > currentMaxWind) {
+        const windKn = toKnots(value).toFixed(1);
+        return appendLog(`New wind speed record: ${windKn} kt`, {
+          'custom.logbook.maxWind': value,
+        });
+      }
+      break;
+    }
+    case 'navigation.attitude.roll': {
+      // roll is heel; value in radians
+      const heelDeg = Math.abs(radToDeg(value));
+      const currentMaxHeel = oldState['custom.logbook.maxHeel'] || 0;
+      if (heelDeg > currentMaxHeel) {
+        return appendLog(`New heel record: ${heelDeg.toFixed(1)}°`, {
+          'custom.logbook.maxHeel': heelDeg,
+        });
+      }
+      break;
+    }
+    case 'navigation.courseOverGroundTrue': {
+      // log when course changes by >25° while under way
+      if (isUnderWay(oldState) && typeof oldState[path] === 'number' && typeof value === 'number') {
+        let delta = Math.abs(radToDeg(value) - radToDeg(oldState[path]));
+        if (delta > 180) delta = 360 - delta;
+        if (delta >= 25) {
+          return appendLog(`Course change: ${radToDeg(oldState[path]).toFixed(0)}° → ${radToDeg(value).toFixed(0)}°`);
+        }
+      }
+      break;
+    }    
     case 'steering.autopilot.state': {
       if (oldState[path] === value || !oldState[path]) {
         // We can ignore state when it doesn't change
