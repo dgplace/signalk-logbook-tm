@@ -105,6 +105,10 @@ Some additional ideas for the future:
 
 ## Changes
 
+* This repo
+  - Add trigger to record when change of heading > 25 degrees
+  - Add trigger when new top high SOG for the the trip
+  - Add trigger when new top high wind speed
 * 0.7.2 (2024-05-13)
   - Fix issue storing entries when `navigation.position` includes altitude
 * 0.7.1 (2024-04-23)
