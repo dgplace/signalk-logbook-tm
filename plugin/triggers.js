@@ -3,11 +3,11 @@ const stateToEntry = require('./format');
 
 // convert m/s to knots
 function toKnots(mps) {
-  return mps * 1.943844;  // 1 m/s ≈ 1.9438 kt
+  return mps * 1.943844; // 1 m/s ≈ 1.9438 kt
 }
 // convert radians to degrees
 function radToDeg(rad) {
-  return rad * 180 / Math.PI;
+  return (rad * 180) / Math.PI;
 }
 
 function isUnderWay(state) {
@@ -112,7 +112,7 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         }
       }
       break;
-    }    
+    }
     case 'steering.autopilot.state': {
       if (oldState[path] === value || !oldState[path]) {
         // We can ignore state when it doesn't change
@@ -145,8 +145,8 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         return appendLog('Anchored', {
           end: true,
           'custom.logbook.maxSpeed': 0,
-          'custom.logbook.maxWind':  0,
-          'custom.logbook.maxHeel':  0
+          'custom.logbook.maxWind': 0,
+          'custom.logbook.maxHeel': 0,
         });
       }
       if (value === 'sailing') {
@@ -177,8 +177,8 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         return appendLog('Stopped', {
           end: true,
           'custom.logbook.maxSpeed': 0,
-          'custom.logbook.maxWind':  0,
-          'custom.logbook.maxHeel':  0
+          'custom.logbook.maxWind': 0,
+          'custom.logbook.maxHeel': 0,
         });
       }
       break;
