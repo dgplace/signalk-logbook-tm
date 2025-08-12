@@ -171,6 +171,8 @@ components:
     Entry:
       type: object
       additionalProperties: false
+      patternProperties:
+        "^custom\\.logbook\\.": {}
       required:
       - datetime
       - text
