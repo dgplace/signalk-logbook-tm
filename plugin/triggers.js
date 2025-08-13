@@ -50,61 +50,51 @@ function sailsString(state, app) {
   return string.join(', ');
 }
 
-exports.processTriggers = function processTriggers(path, value, oldState, log, app) {
-  function appendLog(text, additionalData = {}) {
-    const data = stateToEntry(oldState, text);
-    Object.keys(additionalData).forEach((key) => {
-      data[key] = additionalData[key];
-    });
-    if (!data.category) {
-      data.category = 'navigation';
-    }
-    const dateString = new Date(data.datetime).toISOString().substr(0, 10);
-    return log.appendEntry(dateString, data)
-      .then(() => {
-        app.setPluginStatus(`Automatic log entry: ${text}`);
-        return null;
-      });
+function appendLog(oldState, log, app, text, additionalData = {}) {
+  const data = stateToEntry(oldState, text);
+  Object.keys(additionalData).forEach((key) => {
+    data[key] = additionalData[key];
+  });
+  if (!data.category) {
+    data.category = 'navigation';
   }
+  const dateString = new Date(data.datetime).toISOString().substr(0, 10);
+  return log.appendEntry(dateString, data)
+    .then(() => {
+      app.setPluginStatus(`Automatic log entry: ${text}`);
+      return null;
+    });
+}
 
+exports.processTriggers = function processTriggers(path, value, oldState, log, app) {
   switch (path) {
     case 'navigation.speedOverGround':
     case 'navigation.speedThroughWater': {
-      // new high speed record (value in m/s)
-      const currentMax = oldState['custom.logbook.maxSpeed'] || 0;
-      if (typeof value === 'number' && value > currentMax) {
-        const speedKn = toKnots(value).toFixed(1);
-        return appendLog(`New speed record: ${speedKn} kt`, {
-          'custom.logbook.maxSpeed': value,
-        }).then(() => ({
-          'custom.logbook.maxSpeed': value,
-        }));
+      const currentCandidate = oldState['custom.logbook.maxSpeedCandidate'] || 0;
+      if (typeof value === 'number' && value > currentCandidate) {
+        return Promise.resolve({
+          'custom.logbook.maxSpeedCandidate': value,
+        });
       }
       break;
     }
     case 'environment.wind.speedOverGround': {
-      // new high wind speed
-      const currentMaxWind = oldState['custom.logbook.maxWind'] || 0;
-      if (typeof value === 'number' && value > currentMaxWind) {
-        const windKn = toKnots(value).toFixed(1);
-        return appendLog(`New wind speed record: ${windKn} kt`, {
-          'custom.logbook.maxWind': value,
-        }).then(() => ({
-          'custom.logbook.maxWind': value,
-        }));
+      const currentCandidate = oldState['custom.logbook.maxWindCandidate'] || 0;
+      if (typeof value === 'number' && value > currentCandidate) {
+        return Promise.resolve({
+          'custom.logbook.maxWindCandidate': value,
+        });
       }
       break;
     }
     case 'navigation.attitude.roll': {
       // roll is heel; value in radians
       const heelDeg = Math.abs(radToDeg(value));
-      const currentMaxHeel = oldState['custom.logbook.maxHeel'] || 0;
-      if (heelDeg > currentMaxHeel) {
-        return appendLog(`New heel record: ${heelDeg.toFixed(1)}°`, {
-          'custom.logbook.maxHeel': heelDeg,
-        }).then(() => ({
-          'custom.logbook.maxHeel': heelDeg,
-        }));
+      const currentCandidate = oldState['custom.logbook.maxHeelCandidate'] || 0;
+      if (heelDeg > currentCandidate) {
+        return Promise.resolve({
+          'custom.logbook.maxHeelCandidate': heelDeg,
+        });
       }
       break;
     }
@@ -268,6 +258,50 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
   }
 
   return Promise.resolve();
+};
+
+exports.processTwoMinute = function processTwoMinute(oldState, log, app) {
+  const updates = {
+    'custom.logbook.maxSpeedCandidate': 0,
+    'custom.logbook.maxWindCandidate': 0,
+    'custom.logbook.maxHeelCandidate': 0,
+  };
+
+  let promise = Promise.resolve();
+
+  if (typeof oldState['custom.logbook.maxSpeedCandidate'] === 'number'
+      && oldState['custom.logbook.maxSpeedCandidate'] > (oldState['custom.logbook.maxSpeed'] || 0)) {
+    const speed = oldState['custom.logbook.maxSpeedCandidate'];
+    const speedKn = toKnots(speed).toFixed(1);
+    promise = promise.then(() => appendLog(oldState, log, app, `New speed record: ${speedKn} kt`, {
+      'custom.logbook.maxSpeed': speed,
+    })).then(() => {
+      updates['custom.logbook.maxSpeed'] = speed;
+    });
+  }
+
+  if (typeof oldState['custom.logbook.maxWindCandidate'] === 'number'
+      && oldState['custom.logbook.maxWindCandidate'] > (oldState['custom.logbook.maxWind'] || 0)) {
+    const wind = oldState['custom.logbook.maxWindCandidate'];
+    const windKn = toKnots(wind).toFixed(1);
+    promise = promise.then(() => appendLog(oldState, log, app, `New wind speed record: ${windKn} kt`, {
+      'custom.logbook.maxWind': wind,
+    })).then(() => {
+      updates['custom.logbook.maxWind'] = wind;
+    });
+  }
+
+  if (typeof oldState['custom.logbook.maxHeelCandidate'] === 'number'
+      && oldState['custom.logbook.maxHeelCandidate'] > (oldState['custom.logbook.maxHeel'] || 0)) {
+    const heel = oldState['custom.logbook.maxHeelCandidate'];
+    promise = promise.then(() => appendLog(oldState, log, app, `New heel record: ${heel.toFixed(1)}°`, {
+      'custom.logbook.maxHeel': heel,
+    })).then(() => {
+      updates['custom.logbook.maxHeel'] = heel;
+    });
+  }
+
+  return promise.then(() => updates);
 };
 
 exports.processHourly = function processHourly(oldState, log, app) {

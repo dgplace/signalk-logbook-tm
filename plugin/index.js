@@ -2,7 +2,7 @@ const CircularBuffer = require('circular-buffer');
 const timezones = require('timezones-list');
 const Log = require('./Log');
 const stateToEntry = require('./format');
-const { processTriggers, processHourly } = require('./triggers');
+const { processTriggers, processHourly, processTwoMinute } = require('./triggers');
 const openAPI = require('../schema/openapi.json');
 
 const timezonesList = [
@@ -88,6 +88,7 @@ module.exports = (app) => {
 
   let log;
   let state = {};
+  let lastMaxCheck = 0;
 
   plugin.start = () => {
     log = new Log(app.getDataDirPath());
@@ -153,6 +154,20 @@ module.exports = (app) => {
           });
         sendCrewNames(app, plugin);
       }
+
+      const now = Date.now();
+      if (now - lastMaxCheck >= 120000) {
+        processTwoMinute(state, log, app)
+          .then((stateUpdates) => {
+            Object.keys(stateUpdates).forEach((key) => {
+              state[key] = stateUpdates[key];
+            });
+          }, (err) => {
+            app.setPluginError(`Failed to store entry: ${err.message}`);
+          });
+        lastMaxCheck = now;
+      }
+
       buffer.enq(state);
       // We can keep a clone of the previous values
       state = {
