@@ -76,7 +76,9 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         const speedKn = toKnots(value).toFixed(1);
         return appendLog(`New speed record: ${speedKn} kt`, {
           'custom.logbook.maxSpeed': value,
-        });
+        }).then(() => ({
+          'custom.logbook.maxSpeed': value,
+        }));
       }
       break;
     }
@@ -87,7 +89,9 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         const windKn = toKnots(value).toFixed(1);
         return appendLog(`New wind speed record: ${windKn} kt`, {
           'custom.logbook.maxWind': value,
-        });
+        }).then(() => ({
+          'custom.logbook.maxWind': value,
+        }));
       }
       break;
     }
@@ -98,7 +102,9 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       if (heelDeg > currentMaxHeel) {
         return appendLog(`New heel record: ${heelDeg.toFixed(1)}°`, {
           'custom.logbook.maxHeel': heelDeg,
-        });
+        }).then(() => ({
+          'custom.logbook.maxHeel': heelDeg,
+        }));
       }
       break;
     }
@@ -147,7 +153,11 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
           'custom.logbook.maxHeel': 0,
-        });
+        }).then(() => ({
+          'custom.logbook.maxSpeed': 0,
+          'custom.logbook.maxWind': 0,
+          'custom.logbook.maxHeel': 0,
+        }));
       }
       if (value === 'sailing') {
         let text = '';
@@ -179,7 +189,11 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
           'custom.logbook.maxHeel': 0,
-        });
+        }).then(() => ({
+          'custom.logbook.maxSpeed': 0,
+          'custom.logbook.maxWind': 0,
+          'custom.logbook.maxHeel': 0,
+        }));
       }
       break;
     }
