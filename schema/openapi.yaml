@@ -281,6 +281,12 @@ components:
           type: array
           items:
             type: string
+        'custom.logbook.maxSpeed':
+          type: number
+        'custom.logbook.maxWind':
+          type: number
+        'custom.logbook.maxHeel':
+          type: number
         end:
           type: boolean
           default: false
