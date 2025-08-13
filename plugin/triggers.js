@@ -99,12 +99,29 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       break;
     }
     case 'navigation.courseOverGroundTrue': {
-      // log when course changes by >25° while under way
-      if (isUnderWay(oldState) && typeof oldState[path] === 'number' && typeof value === 'number') {
-        let delta = Math.abs(radToDeg(value) - radToDeg(oldState[path]));
+      // Log when course changes by >25° while under way. Compare against the
+      // last stored course rather than the previous update so that gradual
+      // changes are still picked up once the cumulative change exceeds the
+      // threshold.
+      if (isUnderWay(oldState) && typeof value === 'number') {
+        const last = typeof oldState['custom.logbook.lastCourse'] === 'number'
+          ? oldState['custom.logbook.lastCourse']
+          : value;
+        let delta = Math.abs(radToDeg(value) - radToDeg(last));
         if (delta > 180) delta = 360 - delta;
         if (delta >= 25) {
-          return appendLog(oldState, log, app, `Course change: ${radToDeg(oldState[path]).toFixed(0)}° → ${radToDeg(value).toFixed(0)}°`);
+          return appendLog(
+            oldState,
+            log,
+            app,
+            `Course change: ${radToDeg(last).toFixed(0)}° → ${radToDeg(value).toFixed(0)}°`,
+          ).then(() => ({
+            'custom.logbook.lastCourse': value,
+          }));
+        }
+        if (last !== oldState['custom.logbook.lastCourse']) {
+          // Initialize stored course when starting under way
+          return Promise.resolve({ 'custom.logbook.lastCourse': last });
         }
       }
       break;
@@ -147,6 +164,7 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
           'custom.logbook.maxHeel': 0,
+          'custom.logbook.lastCourse': undefined,
         }));
       }
       if (value === 'sailing') {
@@ -183,6 +201,7 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
           'custom.logbook.maxHeel': 0,
+          'custom.logbook.lastCourse': undefined,
         }));
       }
       break;

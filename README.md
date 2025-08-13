@@ -7,6 +7,7 @@ This application provides both a server-side plugin and the user interface for m
 
 * Entries written when starting/ending a trip (requires [signalk-autostate](https://github.com/meri-imperiumi/signalk-autostate) plugin)
 * When underway, an entry is created every hour recording the current conditions
+* Automatic entry when course over ground changes by more than 25°
 
 ## User interface
 
