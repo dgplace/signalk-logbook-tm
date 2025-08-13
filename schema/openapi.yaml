@@ -156,6 +156,8 @@ components:
     NewEntry:
       type: object
       additionalProperties: false
+      patternProperties:
+        "^custom\\.logbook\\.": {}
       required:
       - text
       properties:
@@ -168,6 +170,12 @@ components:
           maximum: 15
         observations:
           $ref: '#/components/schemas/Observations'
+        'custom.logbook.maxSpeed':
+          type: number
+        'custom.logbook.maxWind':
+          type: number
+        'custom.logbook.maxHeel':
+          type: number
     Entry:
       type: object
       additionalProperties: false
