@@ -104,7 +104,7 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         let delta = Math.abs(radToDeg(value) - radToDeg(oldState[path]));
         if (delta > 180) delta = 360 - delta;
         if (delta >= 25) {
-          return appendLog(`Course change: ${radToDeg(oldState[path]).toFixed(0)}° → ${radToDeg(value).toFixed(0)}°`);
+          return appendLog(oldState, log, app, `Course change: ${radToDeg(oldState[path]).toFixed(0)}° → ${radToDeg(value).toFixed(0)}°`);
         }
       }
       break;
@@ -119,16 +119,16 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         return Promise.resolve();
       }
       if (value === 'auto') {
-        return appendLog('Autopilot activated');
+        return appendLog(oldState, log, app, 'Autopilot activated');
       }
       if (value === 'wind') {
-        return appendLog('Autopilot set to wind mode');
+        return appendLog(oldState, log, app, 'Autopilot set to wind mode');
       }
       if (value === 'route') {
-        return appendLog('Autopilot set to route mode');
+        return appendLog(oldState, log, app, 'Autopilot set to route mode');
       }
       if (value === 'standby') {
-        return appendLog('Autopilot deactivated');
+        return appendLog(oldState, log, app, 'Autopilot deactivated');
       }
       break;
     }
@@ -138,7 +138,7 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         return Promise.resolve();
       }
       if (value === 'anchored') {
-        return appendLog('Anchored', {
+        return appendLog(oldState, log, app, 'Anchored', {
           end: true,
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
@@ -156,25 +156,25 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
           if (oldState['custom.logbook.sails']) {
             text = `${text} with ${oldState['custom.logbook.sails']}`;
           }
-          return appendLog(text);
+          return appendLog(oldState, log, app, text);
         }
         text = 'Sailing';
         if (oldState['custom.logbook.sails']) {
           text = `${text} with ${oldState['custom.logbook.sails']}`;
         }
-        return appendLog(text);
+        return appendLog(oldState, log, app, text);
       }
       if (value === 'motoring') {
         if (oldState[path] === 'anchored') {
-          return appendLog('Anchor up, motoring');
+          return appendLog(oldState, log, app, 'Anchor up, motoring');
         }
         if (oldState[path] === 'sailing') {
-          return appendLog('Sails down, motoring');
+          return appendLog(oldState, log, app, 'Sails down, motoring');
         }
-        return appendLog('Motoring');
+        return appendLog(oldState, log, app, 'Motoring');
       }
       if (value === 'moored') {
-        return appendLog('Stopped', {
+        return appendLog(oldState, log, app, 'Stopped', {
           end: true,
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
@@ -200,13 +200,13 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       const added = value.filter((v) => oldState[path].indexOf(v) === -1);
       const removed = oldState[path].filter((v) => value.indexOf(v) === -1);
       if (added.length && removed.length) {
-        return appendLog(`Crew changed to ${value.join(', ')}`);
+        return appendLog(oldState, log, app, `Crew changed to ${value.join(', ')}`);
       }
       if (added.length) {
-        return appendLog(`${added.join(', ')} joined the crew`);
+        return appendLog(oldState, log, app, `${added.join(', ')} joined the crew`);
       }
       if (removed.length) {
-        return appendLog(`${removed.join(', ')} left the crew`);
+        return appendLog(oldState, log, app, `${removed.join(', ')} left the crew`);
       }
       break;
     }
@@ -227,10 +227,10 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
     }
     const engineName = propulsionState[1];
     if (value === 'started') {
-      return appendLog(`Started ${engineName} engine`);
+      return appendLog(oldState, log, app, `Started ${engineName} engine`);
     }
     if (value === 'stopped') {
-      return appendLog(`Stopped ${engineName} engine`);
+      return appendLog(oldState, log, app, `Stopped ${engineName} engine`);
     }
   }
 
@@ -251,7 +251,7 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       return Promise.resolve(null);
     }
     if (oldState['navigation.state'] === 'sailing') {
-      return appendLog(`Sails set: ${sailsCombined}`)
+      return appendLog(oldState, log, app, `Sails set: ${sailsCombined}`)
         .then(() => stateUpdates);
     }
     return Promise.resolve(stateUpdates);
