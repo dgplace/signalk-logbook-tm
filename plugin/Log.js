@@ -13,6 +13,7 @@ class Log {
   constructor(dir) {
     this.dir = dir;
     this.validator = null;
+    this.queue = Promise.resolve();
   }
 
   listDates() {
@@ -89,10 +90,19 @@ class Log {
       });
   }
 
+  enqueue(op) {
+    this.queue = this.queue.then(() => op()).catch((err) => {
+      // Ensure queue continues after failure
+      this.queue = Promise.resolve();
+      throw err;
+    });
+    return this.queue;
+  }
+
   writeEntry(entry) {
     const datetimeString = new Date(entry.datetime).toISOString();
     const dateString = datetimeString.substr(0, 10);
-    return this.validateEntry(entry)
+    return this.enqueue(() => this.validateEntry(entry)
       .then((valid) => {
         if (valid.errors.length > 0) {
           return Promise.reject(valid.errors[0]);
@@ -113,11 +123,11 @@ class Log {
           updatedDate[idx] = normalized;
         }
         return this.writeDate(dateString, updatedDate);
-      });
+      }));
   }
 
   appendEntry(date, data) {
-    return this.validateEntry(data)
+    return this.enqueue(() => this.validateEntry(data)
       .then((valid) => {
         if (valid.errors.length > 0) {
           return Promise.reject(valid.errors[0]);
@@ -131,12 +141,12 @@ class Log {
         };
         d.push(normalized);
         return this.writeDate(date, d);
-      });
+      }));
   }
 
   deleteEntry(datetimeString) {
     const dateString = datetimeString.substr(0, 10);
-    return this.getDate(dateString)
+    return this.enqueue(() => this.getDate(dateString)
       .then((date) => {
         const entryIdx = date.findIndex((e) => e.datetime.toISOString() === datetimeString);
         if (entryIdx === -1) {
@@ -146,7 +156,7 @@ class Log {
         }
         date.splice(entryIdx, 1);
         return this.writeDate(dateString, date);
-      });
+      }));
   }
 
   getPath(date) {
