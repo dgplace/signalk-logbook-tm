@@ -119,13 +119,17 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         let delta = Math.abs(radToDeg(value) - radToDeg(last));
         if (delta > 180) delta = 360 - delta;
         if (delta >= 25) {
+          const posInfo = app.getSelfPath && app.getSelfPath('navigation.position');
+          const pos = posInfo && posInfo.value ? posInfo.value : oldState['navigation.position'];
+          const stateWithPos = { ...oldState, 'navigation.position': pos };
           return appendLog(
-            oldState,
+            stateWithPos,
             log,
             app,
             `Course change: ${radToDeg(last).toFixed(0)}° → ${radToDeg(value).toFixed(0)}°`,
           ).then(() => ({
             'custom.logbook.lastCourse': value,
+            'navigation.position': pos,
           }));
         }
         if (last !== oldState['custom.logbook.lastCourse']) {
@@ -321,6 +325,9 @@ exports.processTwoMinute = function processTwoMinute(oldState, log, app) {
       position,
     })).then(() => {
       updates['custom.logbook.maxSpeed'] = speed;
+      if (position) {
+        updates['navigation.position'] = position;
+      }
     });
   }
 
@@ -334,6 +341,9 @@ exports.processTwoMinute = function processTwoMinute(oldState, log, app) {
       position,
     })).then(() => {
       updates['custom.logbook.maxWind'] = wind;
+      if (position) {
+        updates['navigation.position'] = position;
+      }
     });
   }
 
