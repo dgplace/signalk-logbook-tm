@@ -121,6 +121,15 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         if (delta >= 25) {
           const posInfo = app.getSelfPath && app.getSelfPath('navigation.position');
           const pos = posInfo && posInfo.value ? posInfo.value : oldState['navigation.position'];
+
+          // Update the stored course immediately so that subsequent
+          // updates see the new value even if log writing is still
+          // in progress.
+          // eslint-disable-next-line no-param-reassign
+          oldState['custom.logbook.lastCourse'] = value;
+          // eslint-disable-next-line no-param-reassign
+          oldState['navigation.position'] = pos;
+
           const stateWithPos = { ...oldState, 'navigation.position': pos };
           return appendLog(
             stateWithPos,
