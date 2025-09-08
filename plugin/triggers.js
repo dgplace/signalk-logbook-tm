@@ -52,9 +52,26 @@ function sailsString(state, app) {
 
 function appendLog(oldState, log, app, text, additionalData = {}) {
   const data = stateToEntry(oldState, text);
+
+  // Ensure the entry has the vessel's position at the time of logging,
+  // unless a specific position is explicitly provided by the caller
+  // (e.g., for max record events captured earlier).
+  if (additionalData.position) {
+    data.position = additionalData.position;
+  } else {
+    const posInfo = app.getSelfPath && app.getSelfPath('navigation.position');
+    if (posInfo && posInfo.value) {
+      const gnssInfo = app.getSelfPath && app.getSelfPath('navigation.gnss.type');
+      const source = (gnssInfo && gnssInfo.value) || (data.position && data.position.source);
+      data.position = source ? { ...posInfo.value, source } : posInfo.value;
+    }
+  }
+
   Object.keys(additionalData).forEach((key) => {
+    if (key === 'position') return; // already handled above
     data[key] = additionalData[key];
   });
+
   if (!data.category) {
     data.category = 'navigation';
   }
@@ -328,15 +345,10 @@ exports.processTwoMinute = function processTwoMinute(oldState, log, app) {
       && oldState['custom.logbook.maxSpeedCandidate'] > (oldState['custom.logbook.maxSpeed'] || 0)) {
     const speed = oldState['custom.logbook.maxSpeedCandidate'];
     const speedKn = toKnots(speed).toFixed(1);
-    const position = oldState['custom.logbook.maxSpeedCandidatePosition'];
     promise = promise.then(() => appendLog(oldState, log, app, `New speed record: ${speedKn} kt`, {
       'custom.logbook.maxSpeed': speed,
-      position,
     })).then(() => {
       updates['custom.logbook.maxSpeed'] = speed;
-      if (position) {
-        updates['navigation.position'] = position;
-      }
     });
   }
 
@@ -344,25 +356,18 @@ exports.processTwoMinute = function processTwoMinute(oldState, log, app) {
       && oldState['custom.logbook.maxWindCandidate'] > (oldState['custom.logbook.maxWind'] || 0)) {
     const wind = oldState['custom.logbook.maxWindCandidate'];
     const windKn = toKnots(wind).toFixed(1);
-    const position = oldState['custom.logbook.maxWindCandidatePosition'];
     promise = promise.then(() => appendLog(oldState, log, app, `New wind speed record: ${windKn} kt`, {
       'custom.logbook.maxWind': wind,
-      position,
     })).then(() => {
       updates['custom.logbook.maxWind'] = wind;
-      if (position) {
-        updates['navigation.position'] = position;
-      }
     });
   }
 
   if (typeof oldState['custom.logbook.maxHeelCandidate'] === 'number'
       && oldState['custom.logbook.maxHeelCandidate'] > (oldState['custom.logbook.maxHeel'] || 0)) {
     const heel = oldState['custom.logbook.maxHeelCandidate'];
-    const position = oldState['custom.logbook.maxHeelCandidatePosition'];
     promise = promise.then(() => appendLog(oldState, log, app, `New heel record: ${heel.toFixed(1)}°`, {
       'custom.logbook.maxHeel': heel,
-      position,
     })).then(() => {
       updates['custom.logbook.maxHeel'] = heel;
     });
@@ -376,6 +381,13 @@ exports.processHourly = function processHourly(oldState, log, app) {
     return Promise.resolve();
   }
   const data = stateToEntry(oldState, '');
+  // Ensure position reflects the vessel's position at the hourly tick
+  const posInfo = app.getSelfPath && app.getSelfPath('navigation.position');
+  if (posInfo && posInfo.value) {
+    const gnssInfo = app.getSelfPath && app.getSelfPath('navigation.gnss.type');
+    const source = (gnssInfo && gnssInfo.value) || (data.position && data.position.source);
+    data.position = source ? { ...posInfo.value, source } : posInfo.value;
+  }
   const dateString = new Date(data.datetime).toISOString().substr(0, 10);
   return log.appendEntry(dateString, data)
     .then(() => {
