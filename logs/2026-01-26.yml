@@ -1,0 +1,1190 @@
+- datetime: 2026-01-26T00:00:12.000Z
+  text: ""
+  author: ""
+  position:
+    longitude: 153.3277568
+    latitude: -27.5226752
+    source: GPS+SBAS/WAAS
+  heading: 326
+  course: 316
+  speed:
+    stw: 4.1
+    sog: 4.9
+  log: 2350.5
+  waypoint:
+    longitude: 153.2453513
+    latitude: -27.4469298
+  wind:
+    speed: 7.8
+    direction: 349
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T00:06:16.000Z
+  text: Autopilot deactivated
+  author: ""
+  position:
+    longitude: 153.3214976
+    latitude: -27.5169376
+    source: GPS+SBAS/WAAS
+  heading: 325
+  course: 314
+  speed:
+    stw: 3.9
+    sog: 4.8
+  log: 2350.9
+  waypoint:
+    longitude: 153.2453513
+    latitude: -27.4469298
+  wind:
+    speed: 8.7
+    direction: 352
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T00:06:23.000Z
+  text: "Course change: 316° → 289°"
+  author: ""
+  position:
+    longitude: 153.321344
+    latitude: -27.5168448
+    source: GPS+SBAS/WAAS
+  heading: 299
+  course: 295
+  speed:
+    stw: 3.8
+    sog: 4.6
+  log: 2351
+  waypoint:
+    longitude: 153.2453513
+    latitude: -27.4469298
+  wind:
+    speed: 7.8
+    direction: 342
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T00:06:34.000Z
+  text: Autopilot set to route mode
+  author: ""
+  position:
+    longitude: 153.3211264
+    latitude: -27.516768
+    source: GPS+SBAS/WAAS
+  heading: 306
+  course: 291
+  speed:
+    stw: 4
+    sog: 4.7
+  log: 2351
+  waypoint:
+    longitude: 153.2453513
+    latitude: -27.4469298
+  wind:
+    speed: 7.9
+    direction: 357
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T00:06:34.000Z
+  text: Autopilot set to route mode
+  author: ""
+  position:
+    longitude: 153.3211264
+    latitude: -27.516768
+    source: GPS+SBAS/WAAS
+  heading: 306
+  course: 291
+  speed:
+    stw: 4
+    sog: 4.7
+  log: 2351
+  waypoint:
+    longitude: 153.2453513
+    latitude: -27.4469298
+  wind:
+    speed: 7.9
+    direction: 357
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T00:06:46.000Z
+  text: "Course change: 289° → 317°"
+  author: ""
+  position:
+    longitude: 153.3208832
+    latitude: -27.5166144
+    source: GPS+SBAS/WAAS
+  heading: 333
+  course: 311
+  speed:
+    stw: 4.3
+    sog: 4.7
+  log: 2351
+  waypoint:
+    longitude: 153.2453513
+    latitude: -27.4469298
+  wind:
+    speed: 8.6
+    direction: 4
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T00:43:26.400Z
+  text: "Course change: 295° → 322°"
+  author: ""
+  position:
+    longitude: 153.2771712
+    latitude: -27.4768032
+    source: GPS+SBAS/WAAS
+  heading: 338
+  course: 319
+  speed:
+    stw: 5.5
+    sog: 6
+  log: 2353.3
+  wind:
+    speed: 11.2
+    direction: 20
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T00:43:43.800Z
+  text: Autopilot activated
+  author: ""
+  position:
+    longitude: 153.2768256
+    latitude: -27.4764896
+    source: GPS+SBAS/WAAS
+  heading: 335
+  course: 317
+  speed:
+    stw: 5.1
+    sog: 5.9
+  log: 2353.3
+  wind:
+    speed: 10.7
+    direction: 19
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T00:44:10.800Z
+  text: "New speed record: 6.5 kt"
+  author: ""
+  position:
+    longitude: 153.2763264
+    latitude: -27.4759072
+    source: GPS+SBAS/WAAS
+  heading: 334
+  course: 323
+  speed:
+    stw: 5
+    sog: 5.7
+  log: 2353.3
+  wind:
+    speed: 9.1
+    direction: 17
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.35
+  category: navigation
+- datetime: 2026-01-26T00:44:10.800Z
+  text: "New wind speed record: 11.5 kt"
+  author: ""
+  position:
+    longitude: 153.2763264
+    latitude: -27.475904
+    source: GPS+SBAS/WAAS
+  heading: 334
+  course: 323
+  speed:
+    stw: 5
+    sog: 5.7
+  log: 2353.3
+  wind:
+    speed: 9.1
+    direction: 17
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 5.923933417787068
+  category: navigation
+- datetime: 2026-01-26T00:47:01.800Z
+  text: "New speed record: 6.1 kt"
+  author: ""
+  position:
+    longitude: 153.2732032
+    latitude: -27.4724096
+    source: GPS+SBAS/WAAS
+  heading: 330
+  course: 318
+  speed:
+    stw: 5.3
+    sog: 6.1
+  log: 2353.6
+  wind:
+    speed: 10
+    direction: 17
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.12
+  category: navigation
+- datetime: 2026-01-26T00:47:01.800Z
+  text: "New wind speed record: 11.0 kt"
+  author: ""
+  position:
+    longitude: 153.2732032
+    latitude: -27.4724032
+    source: GPS+SBAS/WAAS
+  heading: 330
+  course: 318
+  speed:
+    stw: 5.3
+    sog: 6.1
+  log: 2353.6
+  wind:
+    speed: 10
+    direction: 17
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 5.664239874548572
+  category: navigation
+- datetime: 2026-01-26T00:48:23.799Z
+  text: "New speed record: 6.1 kt"
+  author: ""
+  position:
+    longitude: 153.2715392
+    latitude: -27.4707264
+    source: GPS+SBAS/WAAS
+  heading: 329
+  course: 318
+  speed:
+    stw: 5.7
+    sog: 6.1
+  log: 2353.7
+  wind:
+    speed: 11.6
+    direction: 16
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.14
+  category: navigation
+- datetime: 2026-01-26T00:48:23.799Z
+  text: "New wind speed record: 11.6 kt"
+  author: ""
+  position:
+    longitude: 153.2715264
+    latitude: -27.47072
+    source: GPS+SBAS/WAAS
+  heading: 329
+  course: 318
+  speed:
+    stw: 5.7
+    sog: 6.1
+  log: 2353.7
+  wind:
+    speed: 11.6
+    direction: 16
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 5.943294541672791
+  category: navigation
+- datetime: 2026-01-26T00:50:23.699Z
+  text: "New speed record: 6.2 kt"
+  author: ""
+  position:
+    longitude: 153.269056
+    latitude: -27.4682464
+    source: GPS+SBAS/WAAS
+  heading: 329
+  course: 318
+  speed:
+    stw: 4.8
+    sog: 5.8
+  log: 2353.9
+  wind:
+    speed: 10.1
+    direction: 12
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.21
+  category: navigation
+- datetime: 2026-01-26T00:57:23.699Z
+  text: "New speed record: 6.6 kt"
+  author: ""
+  position:
+    longitude: 153.2600064
+    latitude: -27.4594816
+    source: GPS+SBAS/WAAS
+  heading: 327
+  course: 315
+  speed:
+    stw: 5.4
+    sog: 6.4
+  log: 2354.5
+  wind:
+    speed: 9.4
+    direction: 27
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.37
+  category: navigation
+- datetime: 2026-01-26T01:00:23.699Z
+  text: ""
+  author: ""
+  position:
+    longitude: 153.2557952
+    latitude: -27.4556416
+    source: GPS+SBAS/WAAS
+  heading: 328
+  course: 315
+  speed:
+    stw: 5.4
+    sog: 6.6
+  log: 2354.7
+  wind:
+    speed: 11.2
+    direction: 25
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:00:23.699Z
+  text: "New speed record: 6.6 kt"
+  author: ""
+  position:
+    longitude: 153.2557952
+    latitude: -27.4556416
+    source: GPS+SBAS/WAAS
+  heading: 328
+  course: 315
+  speed:
+    stw: 5.4
+    sog: 6.6
+  log: 2354.7
+  wind:
+    speed: 11.2
+    direction: 25
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.41
+  category: navigation
+- datetime: 2026-01-26T01:02:23.699Z
+  text: "New speed record: 6.6 kt"
+  author: ""
+  position:
+    longitude: 153.252992
+    latitude: -27.45304
+    source: GPS+SBAS/WAAS
+  heading: 327
+  course: 317
+  speed:
+    stw: 5.4
+    sog: 6.3
+  log: 2354.9
+  wind:
+    speed: 10.6
+    direction: 17
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.42
+  category: navigation
+- datetime: 2026-01-26T01:02:23.699Z
+  text: "New wind speed record: 11.6 kt"
+  author: ""
+  position:
+    longitude: 153.2529792
+    latitude: -27.4530336
+    source: GPS+SBAS/WAAS
+  heading: 327
+  course: 317
+  speed:
+    stw: 5.4
+    sog: 6.3
+  log: 2354.9
+  wind:
+    speed: 10.6
+    direction: 17
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 5.963104137832213
+  category: navigation
+- datetime: 2026-01-26T01:05:22.700Z
+  text: "New speed record: 6.8 kt"
+  author: ""
+  position:
+    longitude: 153.2484096
+    latitude: -27.4492832
+    source: GPS+SBAS/WAAS
+  heading: 324
+  course: 312
+  speed:
+    stw: 6.2
+    sog: 6.8
+  log: 2355.2
+  wind:
+    speed: 8.7
+    direction: 29
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.52
+  category: navigation
+- datetime: 2026-01-26T01:05:22.700Z
+  text: "New wind speed record: 11.7 kt"
+  author: ""
+  position:
+    longitude: 153.2484096
+    latitude: -27.44928
+    source: GPS+SBAS/WAAS
+  heading: 324
+  course: 312
+  speed:
+    stw: 6.2
+    sog: 6.8
+  log: 2355.2
+  wind:
+    speed: 8.7
+    direction: 29
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 5.998841965266684
+  category: navigation
+- datetime: 2026-01-26T01:06:57.700Z
+  text: "Course change: 320° → 294°"
+  author: ""
+  position:
+    longitude: 153.2461184
+    latitude: -27.4479584
+    source: GPS+SBAS/WAAS
+  heading: 307
+  course: 295
+  speed:
+    stw: 4.3
+    sog: 5.2
+  log: 2355.3
+  wind:
+    speed: 10.1
+    direction: 29
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:08:21.700Z
+  text: "New wind speed record: 12.4 kt"
+  author: ""
+  position:
+    longitude: 153.2437888
+    latitude: -27.447296
+    source: GPS+SBAS/WAAS
+  heading: 299
+  course: 287
+  speed:
+    stw: 5.1
+    sog: 6.4
+  log: 2355.4
+  wind:
+    speed: 10.8
+    direction: 28
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 6.383523526411127
+  category: navigation
+- datetime: 2026-01-26T01:11:21.700Z
+  text: "New speed record: 7.0 kt"
+  author: ""
+  position:
+    longitude: 153.2377472
+    latitude: -27.4457152
+    source: GPS+SBAS/WAAS
+  heading: 299
+  course: 286
+  speed:
+    stw: 5.6
+    sog: 7
+  log: 2355.7
+  wind:
+    speed: 12.1
+    direction: 26
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.6
+  category: navigation
+- datetime: 2026-01-26T01:11:21.700Z
+  text: "New wind speed record: 12.7 kt"
+  author: ""
+  position:
+    longitude: 153.2377472
+    latitude: -27.445712
+    source: GPS+SBAS/WAAS
+  heading: 299
+  course: 286
+  speed:
+    stw: 5.6
+    sog: 7
+  log: 2355.7
+  wind:
+    speed: 12.1
+    direction: 26
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 6.538142131743693
+  category: navigation
+- datetime: 2026-01-26T01:14:21.300Z
+  text: "New speed record: 7.1 kt"
+  author: ""
+  position:
+    longitude: 153.2321024
+    latitude: -27.44424
+    source: GPS+SBAS/WAAS
+  heading: 294
+  course: 284
+  speed:
+    stw: 4.4
+    sog: 5.9
+  log: 2355.9
+  wind:
+    speed: 10.4
+    direction: 32
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.67
+  category: navigation
+- datetime: 2026-01-26T01:19:41.599Z
+  text: Autopilot set to wind mode
+  author: ""
+  position:
+    longitude: 153.2221696
+    latitude: -27.4431584
+    source: GPS+SBAS/WAAS
+  heading: 283
+  course: 273
+  speed:
+    stw: 4.8
+    sog: 6
+  log: 2356.4
+  wind:
+    speed: 10.6
+    direction: 13
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:19:41.599Z
+  text: Autopilot set to wind mode
+  author: ""
+  position:
+    longitude: 153.2221696
+    latitude: -27.4431584
+    source: GPS+SBAS/WAAS
+  heading: 283
+  course: 273
+  speed:
+    stw: 4.8
+    sog: 6
+  log: 2356.4
+  wind:
+    speed: 10.6
+    direction: 13
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:21:04.599Z
+  text: "Course change: 294° → 319°"
+  author: ""
+  position:
+    longitude: 153.2209536
+    latitude: -27.442384
+    source: GPS+SBAS/WAAS
+  heading: 336
+  course: 319
+  speed:
+    stw: 2.7
+    sog: 3
+  log: 2356.4
+  wind:
+    speed: 9.9
+    direction: 11
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:21:27.599Z
+  text: Autopilot activated
+  author: ""
+  position:
+    longitude: 153.220736
+    latitude: -27.4421472
+    source: GPS+SBAS/WAAS
+  heading: 335
+  course: 320
+  speed:
+    stw: 2.7
+    sog: 3
+  log: 2356.5
+  wind:
+    speed: 10.7
+    direction: 16
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:21:47.599Z
+  text: "Course change: 319° → 294°"
+  author: ""
+  position:
+    longitude: 153.2204544
+    latitude: -27.441904
+    source: GPS+SBAS/WAAS
+  heading: 292
+  course: 300
+  speed:
+    stw: 3.2
+    sog: 3.9
+  log: 2356.5
+  wind:
+    speed: 10.3
+    direction: 14
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:21:53.599Z
+  text: "Course change: 294° → 266°"
+  author: ""
+  position:
+    longitude: 153.2203264
+    latitude: -27.4419072
+    source: GPS+SBAS/WAAS
+  heading: 267
+  course: 270
+  speed:
+    stw: 3.2
+    sog: 4.2
+  log: 2356.5
+  wind:
+    speed: 10.7
+    direction: 19
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:22:18.599Z
+  text: Autopilot set to route mode
+  author: ""
+  position:
+    longitude: 153.2197248
+    latitude: -27.4421152
+    source: GPS+SBAS/WAAS
+  heading: 262
+  course: 251
+  speed:
+    stw: 4.3
+    sog: 5.4
+  log: 2356.5
+  waypoint:
+    longitude: 153.2072532
+    latitude: -27.4438955
+  wind:
+    speed: 10.6
+    direction: 27
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:27:33.599Z
+  text: Autopilot activated
+  author: ""
+  position:
+    longitude: 153.2106368
+    latitude: -27.4434048
+    source: GPS+SBAS/WAAS
+  heading: 270
+  course: 260
+  speed:
+    stw: 4.7
+    sog: 5.6
+  log: 2356.9
+  waypoint:
+    longitude: 153.2072532
+    latitude: -27.4438955
+  wind:
+    speed: 11.2
+    direction: 25
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:29:06.199Z
+  text: Autopilot deactivated
+  author: ""
+  position:
+    longitude: 153.2079872
+    latitude: -27.4438368
+    source: GPS+SBAS/WAAS
+  heading: 270
+  course: 260
+  speed:
+    stw: 4.4
+    sog: 5.5
+  log: 2357
+  wind:
+    speed: 10.8
+    direction: 26
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:29:06.199Z
+  text: Autopilot deactivated
+  author: ""
+  position:
+    longitude: 153.2079872
+    latitude: -27.4438368
+    source: GPS+SBAS/WAAS
+  heading: 270
+  course: 260
+  speed:
+    stw: 4.4
+    sog: 5.5
+  log: 2357
+  wind:
+    speed: 10.8
+    direction: 26
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:31:34.599Z
+  text: "Course change: 266° → 241°"
+  author: ""
+  position:
+    longitude: 153.2039936
+    latitude: -27.4454656
+    source: GPS+SBAS/WAAS
+  heading: 247
+  course: 241
+  speed:
+    stw: 4.7
+    sog: 5.7
+  log: 2357.2
+  wind:
+    speed: 11.9
+    direction: 22
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:32:15.199Z
+  text: "New wind speed record: 12.7 kt"
+  author: ""
+  position:
+    longitude: 153.2029312
+    latitude: -27.4459616
+    source: GPS+SBAS/WAAS
+  heading: 250
+  course: 243
+  speed:
+    stw: 4.6
+    sog: 5.7
+  log: 2357.3
+  wind:
+    speed: 12
+    direction: 21
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 6.5589329247557195
+  category: navigation
+- datetime: 2026-01-26T01:35:24.200Z
+  text: "New speed record: 5.8 kt"
+  author: ""
+  position:
+    longitude: 153.1980288
+    latitude: -27.4483808
+    source: GPS+SBAS/WAAS
+  heading: 249
+  course: 242
+  speed:
+    stw: 4.7
+    sog: 5.7
+  log: 2357.5
+  wind:
+    speed: 12.4
+    direction: 25
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 2.96
+  category: navigation
+- datetime: 2026-01-26T01:35:24.200Z
+  text: "New wind speed record: 13.4 kt"
+  author: ""
+  position:
+    longitude: 153.198016
+    latitude: -27.4483872
+    source: GPS+SBAS/WAAS
+  heading: 249
+  course: 242
+  speed:
+    stw: 4.7
+    sog: 5.7
+  log: 2357.5
+  wind:
+    speed: 12.4
+    direction: 25
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 6.888916634572806
+  category: navigation
+- datetime: 2026-01-26T01:36:41.600Z
+  text: Autopilot activated
+  author: ""
+  position:
+    longitude: 153.1960192
+    latitude: -27.4492576
+    source: GPS+SBAS/WAAS
+  heading: 254
+  course: 247
+  speed:
+    stw: 5.5
+    sog: 5.9
+  log: 2357.6
+  wind:
+    speed: 11.8
+    direction: 19
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:36:41.600Z
+  text: Autopilot activated
+  author: ""
+  position:
+    longitude: 153.1960192
+    latitude: -27.4492576
+    source: GPS+SBAS/WAAS
+  heading: 254
+  course: 247
+  speed:
+    stw: 5.5
+    sog: 5.9
+  log: 2357.6
+  wind:
+    speed: 11.8
+    direction: 19
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:37:01.600Z
+  text: Autopilot deactivated
+  author: ""
+  position:
+    longitude: 153.1954176
+    latitude: -27.449456
+    source: GPS+SBAS/WAAS
+  heading: 253
+  course: 248
+  speed:
+    stw: 4.9
+    sog: 6
+  log: 2357.6
+  wind:
+    speed: 12.2
+    direction: 26
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:37:01.600Z
+  text: Autopilot deactivated
+  author: ""
+  position:
+    longitude: 153.1954176
+    latitude: -27.449456
+    source: GPS+SBAS/WAAS
+  heading: 253
+  course: 248
+  speed:
+    stw: 4.9
+    sog: 6
+  log: 2357.6
+  wind:
+    speed: 12.2
+    direction: 26
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:38:24.600Z
+  text: "New speed record: 6.1 kt"
+  author: ""
+  position:
+    longitude: 153.1932544
+    latitude: -27.4506816
+    source: GPS+SBAS/WAAS
+  heading: 246
+  course: 241
+  speed:
+    stw: 4.9
+    sog: 5.9
+  log: 2357.7
+  wind:
+    speed: 11.4
+    direction: 24
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxSpeed: 3.13
+  category: navigation
+- datetime: 2026-01-26T01:38:24.600Z
+  text: "New wind speed record: 13.6 kt"
+  author: ""
+  position:
+    longitude: 153.1932416
+    latitude: -27.4506848
+    source: GPS+SBAS/WAAS
+  heading: 246
+  course: 241
+  speed:
+    stw: 4.9
+    sog: 5.9
+  log: 2357.7
+  wind:
+    speed: 11.4
+    direction: 24
+  crewNames:
+    - David
+    - Tamsin
+  custom.logbook.maxWind: 6.992596324694097
+  category: navigation
+- datetime: 2026-01-26T01:39:18.200Z
+  text: "Course change: 236° → 211°"
+  author: ""
+  position:
+    longitude: 153.191936
+    latitude: -27.4516192
+    source: GPS+SBAS/WAAS
+  heading: 208
+  course: 212
+  speed:
+    stw: 4.9
+    sog: 6
+  log: 2357.8
+  wind:
+    speed: 12.1
+    direction: 20
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:42:01.600Z
+  text: "Course change: 211° → 236°"
+  author: ""
+  position:
+    longitude: 153.190272
+    latitude: -27.4550176
+    source: GPS+SBAS/WAAS
+  heading: 245
+  course: 235
+  speed:
+    stw: 3.4
+    sog: 4
+  log: 2358
+  wind:
+    speed: 9
+    direction: 37
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:42:36.600Z
+  text: "Course change: 236° → 261°"
+  author: ""
+  position:
+    longitude: 153.189696
+    latitude: -27.4552032
+    source: GPS+SBAS/WAAS
+  heading: 271
+  course: 261
+  speed:
+    stw: 2.4
+    sog: 2.9
+  log: 2358
+  wind:
+    speed: 8.2
+    direction: 36
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:43:03.600Z
+  text: "Course change: 261° → 230°"
+  author: ""
+  position:
+    longitude: 153.1893632
+    latitude: -27.455296
+    source: GPS+SBAS/WAAS
+  heading: 213
+  course: 237
+  speed:
+    stw: 2
+    sog: 2.5
+  log: 2358
+  wind:
+    speed: 11
+    direction: 12
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:43:11.600Z
+  text: "Course change: 230° → 204°"
+  author: ""
+  position:
+    longitude: 153.189312
+    latitude: -27.4553792
+    source: GPS+SBAS/WAAS
+  heading: 199
+  course: 206
+  speed:
+    stw: 1.9
+    sog: 2.4
+  log: 2358
+  wind:
+    speed: 9.9
+    direction: 26
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T01:43:31.600Z
+  text: "Course change: 204° → 179°"
+  author: ""
+  position:
+    longitude: 153.1892992
+    latitude: -27.4556
+    source: GPS+SBAS/WAAS
+  heading: 177
+  course: 179
+  speed:
+    stw: 1.8
+    sog: 2.4
+  log: 2358.1
+  wind:
+    speed: 9.8
+    direction: 27
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T02:00:18.499Z
+  text: ""
+  author: ""
+  position:
+    longitude: 153.1892992
+    latitude: -27.4557216
+    source: GPS+SBAS/WAAS
+  heading: 187
+  course: 178
+  speed:
+    stw: 0
+    sog: 0
+  log: 2358.1
+  wind:
+    speed: 9.3
+    direction: 37
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T02:10:26.100Z
+  text: "Course change: 179° → 333°"
+  author: ""
+  position:
+    longitude: 153.189312
+    latitude: -27.4557536
+    source: GPS
+  heading: 187
+  course: 178
+  speed:
+    stw: 0
+    sog: 0
+  log: 2358.1
+  wind:
+    speed: 8.3
+    direction: 34
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T02:12:38.700Z
+  text: "Course change: 333° → 41°"
+  author: ""
+  position:
+    longitude: 153.1892608
+    latitude: -27.4556032
+    source: GPS
+  heading: 187
+  course: 333
+  speed:
+    stw: 0
+    sog: 0.1
+  log: 2358.1
+  wind:
+    speed: 8.6
+    direction: 33
+  crewNames:
+    - David
+    - Tamsin
+  category: navigation
+- datetime: 2026-01-26T02:14:37.699Z
+  text: Stopped
+  author: ""
+  position:
+    longitude: 153.1892992
+    latitude: -27.4557216
+    source: GPS+SBAS/WAAS
+  heading: 187
+  course: 41
+  speed:
+    stw: 0
+    sog: 0
+  log: 2357.5
+  wind:
+    speed: 7
+    direction: 16
+  crewNames:
+    - David
+    - Tamsin
+  end: true
+  custom.logbook.maxSpeed: 0
+  custom.logbook.maxWind: 0
+  custom.logbook.maxHeel: 0
+  category: navigation
