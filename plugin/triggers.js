@@ -50,6 +50,18 @@ function sailsString(state, app) {
   return string.join(', ');
 }
 
+/**
+ * Build a log entry from the current state and persist it to disk.
+ *
+ * @param {Object<string, *>} oldState - Shared plugin state used to populate
+ *   the entry fields (position, speed, heading, etc.).
+ * @param {import('./Log')} log - Log instance for persisting the entry.
+ * @param {object} app - Signal K application object.
+ * @param {string} text - Human-readable description of the event.
+ * @param {Object<string, *>} [additionalData={}] - Extra fields merged into
+ *   the entry (e.g. `end`, `position`).
+ * @returns {Promise<void>}
+ */
 function appendLog(oldState, log, app, text, additionalData = {}) {
   const data = stateToEntry(oldState, text);
 
@@ -83,6 +95,19 @@ function appendLog(oldState, log, app, text, additionalData = {}) {
     });
 }
 
+/**
+ * Process Signal K path updates and create automatic log entries when
+ * significant state changes are detected (e.g. course, autopilot,
+ * navigation state, crew, sails, propulsion).
+ *
+ * @param {string} path - Signal K path that changed.
+ * @param {*} value - New value for the path.
+ * @param {Object<string, *>} oldState - Mutable shared state object; updated
+ *   in-place for certain paths to prevent duplicate entries.
+ * @param {import('./Log')} log - Log instance for persisting entries.
+ * @param {object} app - Signal K application object.
+ * @returns {Promise<Object<string, *>|void>} Optional state updates to merge.
+ */
 exports.processTriggers = function processTriggers(path, value, oldState, log, app) {
   switch (path) {
     case 'navigation.speedOverGround':
@@ -174,6 +199,11 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         // Autopilot state changes are likely not interesting when not under way
         return Promise.resolve();
       }
+      // Update state immediately to prevent duplicate entries when the same
+      // state change arrives from multiple sources before the async log write
+      // completes (same pattern used by the course change handler).
+      // eslint-disable-next-line no-param-reassign
+      oldState[path] = value;
       if (value === 'auto') {
         return appendLog(oldState, log, app, 'Autopilot activated');
       }
@@ -193,6 +223,10 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
         // We can ignore state when it doesn't change
         return Promise.resolve();
       }
+      // Capture previous state for log text before updating immediately
+      const prevState = oldState[path];
+      // eslint-disable-next-line no-param-reassign
+      oldState[path] = value;
       if (value === 'anchored') {
         return appendLog(oldState, log, app, 'Anchored', {
           end: true,
@@ -211,7 +245,7 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       }
       if (value === 'sailing') {
         let text = '';
-        if (oldState[path] === 'motoring') {
+        if (prevState === 'motoring') {
           text = 'Motor stopped, sailing';
           if (oldState['custom.logbook.sails']) {
             text = `${text} with ${oldState['custom.logbook.sails']}`;
@@ -226,9 +260,9 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       }
       if (value === 'motoring') {
         let text = 'Motoring';
-        if (oldState[path] === 'anchored') {
+        if (prevState === 'anchored') {
           text = 'Anchor up, motoring';
-        } else if (oldState[path] === 'sailing') {
+        } else if (prevState === 'sailing') {
           text = 'Sails down, motoring';
         }
         return appendLog(oldState, log, app, text)
@@ -325,6 +359,15 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
   return Promise.resolve();
 };
 
+/**
+ * Periodic check (every ~2 minutes) that promotes max-value candidates
+ * (speed, wind, heel) into permanent records by writing log entries.
+ *
+ * @param {Object<string, *>} oldState - Shared plugin state.
+ * @param {import('./Log')} log - Log instance for persisting entries.
+ * @param {object} app - Signal K application object.
+ * @returns {Promise<Object<string, *>>} State updates to merge (resets candidates).
+ */
 exports.processTwoMinute = function processTwoMinute(oldState, log, app) {
   const updates = {
     'custom.logbook.maxSpeedCandidate': 0,
@@ -376,6 +419,14 @@ exports.processTwoMinute = function processTwoMinute(oldState, log, app) {
   return promise.then(() => updates);
 };
 
+/**
+ * Create an automatic hourly log entry when the vessel is under way.
+ *
+ * @param {Object<string, *>} oldState - Shared plugin state.
+ * @param {import('./Log')} log - Log instance for persisting entries.
+ * @param {object} app - Signal K application object.
+ * @returns {Promise<void>}
+ */
 exports.processHourly = function processHourly(oldState, log, app) {
   if (oldState['navigation.state'] !== 'sailing' && oldState['navigation.state'] !== 'motoring') {
     return Promise.resolve();

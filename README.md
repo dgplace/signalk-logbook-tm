@@ -107,6 +107,7 @@ Some additional ideas for the future:
 ## Changes
 
 * This repo
+  - Fix duplicate log entries for autopilot and navigation state triggers
   - Add trigger to record when change of heading > 25 degrees
   - Add trigger when new top high SOG for the the trip
   - Add trigger when new top high wind speed
