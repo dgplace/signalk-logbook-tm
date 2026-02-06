@@ -3,4 +3,3 @@ package-lock.json
 /public/
 /schema/openapi.json
 .claude/
-/logs/
