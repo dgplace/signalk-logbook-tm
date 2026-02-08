@@ -1,7 +1,7 @@
 {
-  "name": "@meri-imperiumi/signalk-logbook",
-  "version": "0.7.2",
-  "description": "Semi-automatic electronic logbook for Signal K",
+  "name": "signalk-cruisereport",
+  "version": "1.0.0",
+  "description": "Semi-automatic electronic logbook for Signal K with Cruise Report integration",
   "main": "plugin/index.js",
   "scripts": {
     "prepublishOnly": "npm run build",
@@ -14,19 +14,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/meri-imperiumi/signalk-logbook.git"
+    "url": "git://github.com/dgplace/signalk-logbook-tm.git"
   },
   "keywords": [
     "signalk-node-server-plugin",
     "signalk-embeddable-webapp",
     "signalk-category-utility"
   ],
-  "author": "Henri Bergius <henri.bergius@iki.fi>",
+  "author": "David Place",
+  "contributors": [
+    "Henri Bergius <henri.bergius@iki.fi>"
+  ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/meri-imperiumi/signalk-logbook/issues"
+    "url": "https://github.com/dgplace/signalk-logbook-tm/issues"
   },
-  "homepage": "https://github.com/meri-imperiumi/signalk-logbook#readme",
+  "homepage": "https://github.com/dgplace/signalk-logbook-tm#readme",
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/preset-react": "^7.18.6",
@@ -52,7 +55,7 @@
   },
   "signalk": {
     "appIcon": "./logbook.png",
-    "displayName": "Logbook"
+    "displayName": "Cruise Report"
   },
   "signalk-plugin-enabled-by-default": true,
   "publishConfig": {

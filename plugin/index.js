@@ -53,9 +53,9 @@ module.exports = (app) => {
   let unsubscribes = [];
   let interval;
 
-  plugin.id = 'signalk-logbook';
-  plugin.name = 'Logbook';
-  plugin.description = 'Semi-automatic electronic logbook for sailing vessels';
+  plugin.id = 'signalk-cruisereport';
+  plugin.name = 'Cruise Report';
+  plugin.description = 'Semi-automatic electronic logbook for sailing vessels with Cruise Report integration';
 
   const setStatus = app.setPluginStatus || app.setProviderStatus;
 
@@ -131,7 +131,7 @@ module.exports = (app) => {
               app.setPluginError(`Failed to store entry: ${err.message}`);
             })
             .then(() => {
-              if (u.$source === 'signalk-logbook.XX' && v.path !== 'communication.crewNames') {
+              if (u.$source === 'signalk-cruisereport.XX' && v.path !== 'communication.crewNames') {
                 // Don't store our reports into state
                 return;
               }

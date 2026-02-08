@@ -37,11 +37,11 @@ function AppPanel(props) {
       setNeedsUpdate(true);
     }, 5 * 60000);
 
-    fetch('/plugins/signalk-logbook/logs')
+    fetch('/plugins/signalk-cruisereport/logs')
       .then((res) => res.json())
       .then((dates) => {
         setDays(dates);
-        Promise.all(dates.map((day) => fetch(`/plugins/signalk-logbook/logs/${day}`)
+        Promise.all(dates.map((day) => fetch(`/plugins/signalk-cruisereport/logs/${day}`)
           .then((r) => r.json())))
           .then((dayEntries) => {
             const all = [].concat.apply([], dayEntries); // eslint-disable-line prefer-spread

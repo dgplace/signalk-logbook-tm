@@ -1,4 +1,4 @@
-# signalk-logbook-tm Development Log
+# signalk-cruisereport Development Log
 
 ## Architecture Overview
 
@@ -9,7 +9,7 @@ This is a **Signal K** server plugin and embedded webapp that provides a semi-au
 1. **Signal K subscriptions** &rarr; `plugin/index.js` subscribes to ~20 paths (position, speed, wind, state, etc.) at 1-second intervals.
 2. **Trigger processing** &rarr; each delta update is passed to `processTriggers()` which decides whether to create an automatic log entry (e.g. course change > 25&deg;, autopilot toggle, vessel state transition).
 3. **Periodic checks** &rarr; a 60-second interval drives hourly log entries (`processHourly`) and a 2-minute max-record promotion cycle (`processTwoMinute`).
-4. **Persistence** &rarr; the `Log` class writes/reads YAML files in `~/.signalk/plugin-config-data/signalk-logbook/YYYY-MM-DD.yml`.
+4. **Persistence** &rarr; the `Log` class writes/reads YAML files in `~/.signalk/plugin-config-data/signalk-cruisereport/YYYY-MM-DD.yml`.
 5. **REST API** &rarr; `plugin/index.js` exposes CRUD endpoints (`GET/POST /logs`, `GET/PUT/DELETE /logs/:date/:entry`) and a discovery endpoint (`GET /cruise-report/info`) for the macOS Cruise Report app.
 6. **Web UI** &rarr; Simplified React SPA served as an embedded Signal K webapp; provides a read-only overview of available data (day summary table and map view).
 

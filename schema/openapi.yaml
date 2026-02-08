@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: Signal K Logbook
-  description: API for the semi-automatic vessel logbook
+  title: Signal K Cruise Report
+  description: API for the semi-automatic vessel logbook with Cruise Report integration
   version: 0.2.0
 tags:
   - name: entries
@@ -153,7 +153,7 @@ components:
       properties:
         plugin:
           type: string
-          example: signalk-logbook
+          example: signalk-cruisereport
         version:
           type: string
           example: '0.7.2'

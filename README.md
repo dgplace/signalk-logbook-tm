@@ -1,9 +1,9 @@
-Semi-automatic logbook for Signal K
-===================================
+Semi-automatic logbook for Signal K — Cruise Report Edition
+============================================================
 
-Status: ready for the first test runs
+> **Based on** [signalk-logbook](https://github.com/meri-imperiumi/signalk-logbook) by Henri Bergius. Original code licensed under MIT.
 
-This application provides both a server-side plugin and the user interface for maintaining semi-automatic logbooks with [Signal K](https://signalk.org). Just like traditional logbooks, you can write an entry at any time. However, there are several things that are done automatically for you:
+This is a fork of the Signal K logbook plugin, adapted to serve as a data source for the macOS **Cruise Report** application. It provides both a server-side plugin and a simplified web interface for monitoring semi-automatic logbooks with [Signal K](https://signalk.org). Several things are done automatically:
 
 * Entries written when starting/ending a trip (requires [signalk-autostate](https://github.com/meri-imperiumi/signalk-autostate) plugin)
 * When underway, an entry is created every hour recording the current conditions
@@ -14,9 +14,9 @@ This application provides both a server-side plugin and the user interface for m
 This plugin acts as a passerelle (bridge) for the macOS **Cruise Report** application. The macOS app can:
 
 1. Discover the Signal K server via mDNS (`_signalk-http._tcp`) or by entering the server IP address manually.
-2. Call `GET /plugins/signalk-logbook/cruise-report/info` to confirm a compatible logbook plugin is running and retrieve vessel metadata.
-3. Call `GET /plugins/signalk-logbook/logs` to list available days.
-4. Call `GET /plugins/signalk-logbook/logs/{date}` to download all entries for a given day.
+2. Call `GET /plugins/signalk-cruisereport/cruise-report/info` to confirm a compatible logbook plugin is running and retrieve vessel metadata.
+3. Call `GET /plugins/signalk-cruisereport/logs` to list available days.
+4. Call `GET /plugins/signalk-cruisereport/logs/{date}` to download all entries for a given day.
 
 The macOS app handles trip aggregation and reporting locally.
 
@@ -31,7 +31,7 @@ The plugin provides a simplified read-only web interface as part of the [Signal 
 
 This logbook app writes the logs to disk using [YAML format](https://en.wikipedia.org/wiki/YAML) which combines machine readability with at least some degree of human readability.
 
-Logs are stored on a file per day basis at `~/.signalk/plugin-config-data/signalk-logbook/YYYY-MM-DD.yml` 
+Logs are stored on a file per day basis at `~/.signalk/plugin-config-data/signalk-cruisereport/YYYY-MM-DD.yml` 
 If there are no entries for a given day, no file gets written.
 
 Note: unlike Signal K itself, the log entries are written using "human-friendly" units, so degrees, knots, etc. They look something like:
