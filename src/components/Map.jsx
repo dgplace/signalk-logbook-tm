@@ -17,6 +17,11 @@ function calculateBounds(points) {
   ];
 }
 
+/**
+ * Read-only map view showing vessel track and log entry positions.
+ * @param {object} props - Component props.
+ * @param {Array} props.entries - Array of log entry objects.
+ */
 function Map(props) {
   // For map we only care about entries with a position
   const entries = props.entries.filter((e) => e.position).map((entry) => ({
@@ -143,7 +148,7 @@ function Map(props) {
           key={entry.datetime}
           color={color}
           anchor={[entry.position.latitude, entry.position.longitude]}
-          onClick={() => props.viewEntry(entry)} />
+        />
         );
       })}
     </PigeonMap>

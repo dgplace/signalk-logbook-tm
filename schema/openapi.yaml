@@ -6,7 +6,22 @@ info:
 tags:
   - name: entries
     description: Log entry management
+  - name: cruise-report
+    description: Cruise Report app integration
 paths:
+  /cruise-report/info:
+    get:
+      tags:
+      - cruise-report
+      summary: Plugin and vessel info
+      description: Returns plugin version, vessel name, and API version for macOS Cruise Report app discovery
+      responses:
+        '200':
+          description: Plugin metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CruiseReportInfo'
   /logs:
     get:
       tags:
@@ -128,6 +143,26 @@ paths:
           description: Succesful operation
 components:
   schemas:
+    CruiseReportInfo:
+      type: object
+      additionalProperties: false
+      required:
+      - plugin
+      - version
+      - apiVersion
+      properties:
+        plugin:
+          type: string
+          example: signalk-logbook
+        version:
+          type: string
+          example: '0.7.2'
+        vessel:
+          type: string
+          example: 'SV Meri'
+        apiVersion:
+          type: integer
+          example: 1
     Logs:
       type: array
       items:

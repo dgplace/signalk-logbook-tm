@@ -10,8 +10,8 @@ This is a **Signal K** server plugin and embedded webapp that provides a semi-au
 2. **Trigger processing** &rarr; each delta update is passed to `processTriggers()` which decides whether to create an automatic log entry (e.g. course change > 25&deg;, autopilot toggle, vessel state transition).
 3. **Periodic checks** &rarr; a 60-second interval drives hourly log entries (`processHourly`) and a 2-minute max-record promotion cycle (`processTwoMinute`).
 4. **Persistence** &rarr; the `Log` class writes/reads YAML files in `~/.signalk/plugin-config-data/signalk-logbook/YYYY-MM-DD.yml`.
-5. **REST API** &rarr; `plugin/index.js` exposes CRUD endpoints (`GET/POST /logs`, `GET/PUT/DELETE /logs/:date/:entry`) consumed by the webapp.
-6. **Web UI** &rarr; React SPA served as an embedded Signal K webapp; provides logbook table, map view, entry editor, sail/crew editors.
+5. **REST API** &rarr; `plugin/index.js` exposes CRUD endpoints (`GET/POST /logs`, `GET/PUT/DELETE /logs/:date/:entry`) and a discovery endpoint (`GET /cruise-report/info`) for the macOS Cruise Report app.
+6. **Web UI** &rarr; Simplified React SPA served as an embedded Signal K webapp; provides a read-only overview of available data (day summary table and map view).
 
 ### Race-Condition Prevention Pattern
 
@@ -28,18 +28,8 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 | `schema/openapi.yaml` | OpenAPI 3 spec for the logbook REST API. |
 | `schema/openapi.json` | Auto-generated JSON version of the OpenAPI spec (built via `js-yaml`). |
 | `src/index.js` | React webapp entry point. |
-| `src/components/AppPanel.jsx` | Top-level app shell component. |
-| `src/components/Logbook.jsx` | Table view of log entries. |
-| `src/components/Map.jsx` | Map view of log entries with vessel track. |
-| `src/components/Timeline.jsx` | Timeline visualisation of log data. |
-| `src/components/EntryEditor.jsx` | Form for creating new log entries. |
-| `src/components/EntryViewer.jsx` | Read-only display of a single entry. |
-| `src/components/EntryDetails.jsx` | Detailed view of entry fields. |
-| `src/components/FilterEditor.jsx` | Date-range filter for the log view. |
-| `src/components/SailEditor.jsx` | UI for registering sail changes. |
-| `src/components/CrewEditor.jsx` | UI for managing crew list. |
-| `src/components/Metadata.jsx` | Displays metadata (timezone, etc.). |
-| `src/helpers/observations.js` | Helper utilities for weather observation data. |
+| `src/components/AppPanel.jsx` | Top-level app shell. Read-only overview with day summary table and map tabs. |
+| `src/components/Map.jsx` | Read-only map view of log entry positions with vessel track. |
 | `public_src/` | Static assets source (icons, HTML template). |
 | `public/` | Webpack build output served by Signal K. |
 | `webpack.config.js` | Webpack configuration for building the React webapp. |
@@ -49,6 +39,8 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 ## Change Log
 
 ### Unreleased
+- **feat: add Cruise Report passerelle** &mdash; Add `GET /cruise-report/info` endpoint returning plugin version, vessel name, and API version for macOS Cruise Report app discovery. Update OpenAPI schema with `CruiseReportInfo` schema and new `cruise-report` tag.
+- **refactor: simplify web app to read-only overview** &mdash; Replace full-featured UI (timeline, logbook table, entry/crew/sail/filter editors) with a minimal overview showing a per-day entry count table and a read-only map. Removed components: `Timeline`, `Logbook`, `EntryEditor`, `EntryViewer`, `EntryDetails`, `FilterEditor`, `SailEditor`, `CrewEditor`, `Metadata`, `observations.js`.
 - **fix: prevent duplicate log entries for autopilot and navigation state triggers** &mdash; Update `oldState[path]` immediately before the async log write in the `steering.autopilot.state` and `navigation.state` handlers, matching the pattern already used by the course-change handler. For the navigation state handler, the previous value is captured in `prevState` so log text still reflects the correct transition (e.g. "Motor stopped, sailing").
 - Add JSDoc documentation headers to exported trigger functions.
 - Create this LOG.md file.

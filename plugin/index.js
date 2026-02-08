@@ -4,6 +4,7 @@ const Log = require('./Log');
 const stateToEntry = require('./format');
 const { processTriggers, processHourly, processTwoMinute } = require('./triggers');
 const openAPI = require('../schema/openapi.json');
+const pkg = require('../package.json');
 
 const timezonesList = [
   {
@@ -238,6 +239,22 @@ module.exports = (app) => {
       app.debug(error.message);
       res.sendStatus(500);
     }
+    /**
+     * Returns plugin and vessel metadata for macOS Cruise Report app discovery.
+     * @route GET /cruise-report/info
+     * @returns {{ plugin: string, version: string, vessel: string, apiVersion: number }}
+     */
+    router.get('/cruise-report/info', (req, res) => {
+      res.contentType('application/json');
+      const vesselName = app.getSelfPath('name') || '';
+      res.send(JSON.stringify({
+        plugin: plugin.id,
+        version: pkg.version,
+        vessel: vesselName,
+        apiVersion: 1,
+      }));
+    });
+
     router.get('/logs', (req, res) => {
       res.contentType('application/json');
       log.listDates()

@@ -9,22 +9,23 @@ This application provides both a server-side plugin and the user interface for m
 * When underway, an entry is created every hour recording the current conditions
 * Automatic entry when course over ground changes by more than 25°
 
+## Cruise Report Integration
+
+This plugin acts as a passerelle (bridge) for the macOS **Cruise Report** application. The macOS app can:
+
+1. Discover the Signal K server via mDNS (`_signalk-http._tcp`) or by entering the server IP address manually.
+2. Call `GET /plugins/signalk-logbook/cruise-report/info` to confirm a compatible logbook plugin is running and retrieve vessel metadata.
+3. Call `GET /plugins/signalk-logbook/logs` to list available days.
+4. Call `GET /plugins/signalk-logbook/logs/{date}` to download all entries for a given day.
+
+The macOS app handles trip aggregation and reporting locally.
+
 ## User interface
 
-The logbook presents a web-based user interface as part of the [Signal K](https://signalk.org) administration interface. The features should work fine on both desktop and mobile browsers.
+The plugin provides a simplified read-only web interface as part of the [Signal K](https://signalk.org) administration interface. It shows:
 
-Adding a log entry:
-![Add entry](https://i.imgur.com/0M7CdOY.png)
-
-Traditional logbook view:
-![Logbook as table](https://i.imgur.com/Xa6XNyh.png)
-![Editing an entry](https://i.imgur.com/CDD57LQ.png)
-
-Log entries on a map:
-![Map view](https://user-images.githubusercontent.com/3346/219135937-0e1b75cf-13ed-4f79-9ba0-0d2b6fee7747.jpeg)
-
-Registering sail changes:
-![Sails editor](https://user-images.githubusercontent.com/3346/222392061-6760eb71-93a8-4c99-b47b-a9f2fd7b1c54.png)
+* An overview table listing each day that has logbook data, with entry counts.
+* A map view displaying vessel track and log entry positions.
 
 ## Data storage and format
 
@@ -94,7 +95,19 @@ The [signalk-derived-data](https://github.com/sbender9/signalk-derived-data) and
 
 ## API
 
-Other applications can also use the [logbook API](https://editor.swagger.io/?url=https://raw.githubusercontent.com/meri-imperiumi/signalk-logbook/main/schema/openapi.yaml) for retrieving and writing log entries. This can be useful for automations with [Node-Red](https://nodered.org) or [NoFlo](https://noflojs.org) etc.
+The plugin exposes the following REST API endpoints:
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/cruise-report/info` | Plugin version, vessel name, and API version for Cruise Report app discovery |
+| `GET` | `/logs` | List of dates with logbook entries |
+| `POST` | `/logs` | Create a new log entry |
+| `GET` | `/logs/{date}` | All entries for a given day |
+| `GET` | `/logs/{date}/{datetime}` | Single entry |
+| `PUT` | `/logs/{date}/{datetime}` | Update an entry |
+| `DELETE` | `/logs/{date}/{datetime}` | Delete an entry |
+
+See the [OpenAPI spec](schema/openapi.yaml) for full details. The API can also be used for automations with [Node-Red](https://nodered.org) or [NoFlo](https://noflojs.org) etc.
 
 ## Ideas
 
@@ -107,6 +120,9 @@ Some additional ideas for the future:
 ## Changes
 
 * This repo
+  - Add Cruise Report passerelle: `GET /cruise-report/info` discovery endpoint for macOS Cruise Report app
+  - Simplify web UI to read-only overview (day summary table + map)
+  - Remove entry/crew/sail editors (editing now handled by Cruise Report macOS app)
   - Fix duplicate log entries for autopilot and navigation state triggers
   - Add trigger to record when change of heading > 25 degrees
   - Add trigger when new top high SOG for the the trip
