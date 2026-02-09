@@ -65,6 +65,8 @@ module.exports = {
           },
         },
         'react-dom',
+        'react-leaflet',
+        'leaflet',
       ],
     }),
     new WatchIgnorePlugin({

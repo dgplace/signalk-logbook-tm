@@ -6,9 +6,9 @@ This is a **Signal K** server plugin and embedded webapp that provides a semi-au
 
 ### Data Flow
 
-1. **Signal K subscriptions** &rarr; `plugin/index.js` subscribes to ~20 paths (position, speed, wind, state, etc.) at 1-second intervals.
+1. **Signal K subscriptions** &rarr; `plugin/index.js` subscribes to ~16 paths (position, speed, wind, state, etc.) at 1-second intervals.
 2. **Trigger processing** &rarr; each delta update is passed to `processTriggers()` which decides whether to create an automatic log entry (e.g. course change > 25&deg;, autopilot toggle, vessel state transition).
-3. **Periodic checks** &rarr; a 60-second interval drives hourly log entries (`processHourly`) and a 2-minute max-record promotion cycle (`processTwoMinute`).
+3. **Periodic checks** &rarr; a 60-second interval drives configurable heartbeat log entries (`processHourly`, default every 30 min) and a 2-minute max-record promotion cycle (`processTwoMinute`).
 4. **Persistence** &rarr; the `Log` class writes/reads YAML files in `~/.signalk/plugin-config-data/signalk-cruisereport/YYYY-MM-DD.yml`.
 5. **REST API** &rarr; `plugin/index.js` exposes CRUD endpoints (`GET/POST /logs`, `GET/PUT/DELETE /logs/:date/:entry`) and a discovery endpoint (`GET /cruise-report/info`) for the macOS Cruise Report app.
 6. **Web UI** &rarr; Simplified React SPA served as an embedded Signal K webapp; provides a read-only overview of available data (day summary table and map view).
@@ -21,15 +21,16 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 
 | File | Purpose |
 |---|---|
-| `plugin/index.js` | Main Signal K plugin entry point. Manages subscriptions, state buffer, periodic timers, REST API routes, and plugin configuration schema. |
-| `plugin/triggers.js` | Event detection logic. `processTriggers()` handles per-update triggers; `processTwoMinute()` promotes max-value candidates; `processHourly()` writes hourly entries. |
+| `plugin/index.js` | Main Signal K plugin entry point. Manages subscriptions, state buffer, periodic timers, REST API routes, and plugin configuration schema (heartbeat interval). |
+| `plugin/triggers.js` | Event detection logic. `processTriggers()` handles per-update triggers; `processTwoMinute()` promotes max-value candidates; `processHourly()` writes heartbeat entries. |
 | `plugin/format.js` | `stateToEntry()` converts the in-memory state object into a human-friendly log entry (degrees, knots, hPa, NM). |
 | `plugin/Log.js` | `Log` class providing YAML-based persistence with JSON-Schema validation, file-per-day storage, and a write queue to serialise concurrent writes. |
 | `schema/openapi.yaml` | OpenAPI 3 spec for the logbook REST API. |
 | `schema/openapi.json` | Auto-generated JSON version of the OpenAPI spec (built via `js-yaml`). |
 | `src/index.js` | React webapp entry point. |
 | `src/components/AppPanel.jsx` | Top-level app shell. Read-only overview with day summary table and map tabs. |
-| `src/components/Map.jsx` | Read-only map view of log entry positions with vessel track. |
+| `src/components/Map.jsx` | Read-only Leaflet map view of log entry positions with vessel track (OpenStreetMap + OpenSeaMap tiles). |
+| `src/components/leaflet-hack.js` | Webpack compatibility fix for Leaflet default marker icons and CSS import. |
 | `public_src/` | Static assets source (icons, HTML template). |
 | `public/` | Webpack build output served by Signal K. |
 | `webpack.config.js` | Webpack configuration for building the React webapp. |
@@ -42,6 +43,10 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 - **feat: add Cruise Report passerelle** &mdash; Add `GET /cruise-report/info` endpoint returning plugin version, vessel name, and API version for macOS Cruise Report app discovery. Update OpenAPI schema with `CruiseReportInfo` schema and new `cruise-report` tag.
 - **refactor: simplify web app to read-only overview** &mdash; Replace full-featured UI (timeline, logbook table, entry/crew/sail/filter editors) with a minimal overview showing a per-day entry count table and a read-only map. Removed components: `Timeline`, `Logbook`, `EntryEditor`, `EntryViewer`, `EntryDetails`, `FilterEditor`, `SailEditor`, `CrewEditor`, `Metadata`, `observations.js`.
 - **fix: prevent duplicate log entries for autopilot and navigation state triggers** &mdash; Update `oldState[path]` immediately before the async log write in the `steering.autopilot.state` and `navigation.state` handlers, matching the pattern already used by the course-change handler. For the navigation state handler, the previous value is captured in `prevState` so log text still reflects the correct transition (e.g. "Motor stopped, sailing").
+- **refactor: remove `sails.inventory.*` and `communication.crewNames` paths** &mdash; Stop subscribing to sail inventory and crew name paths. Remove `sendCrewNames()` helper, the `communication.crewNames` PUT handler, the crew-change trigger in `triggers.js`, the `crewNames` field from `stateToEntry()` in `format.js`, and the `crewNames` property from the plugin configuration schema. Crew and sail management is now handled by the Cruise Report macOS app.
+- **refactor: replace pigeon-maps with Leaflet** &mdash; Replace pigeon-maps map library with Leaflet + react-leaflet v2 (matching @signalk/vesselpositions approach). Use OpenStreetMap base tiles with optional OpenSeaMap sea marks overlay. Vessel track rendered as a single Polyline; log entries shown as colour-coded CircleMarkers. Remove `pigeon-maps`, `@mapbox/geo-viewport`, and `where` dependencies. Add `leaflet-hack.js` for webpack marker icon compatibility.
+- **feat: add daily distance column** &mdash; Overview table now shows total distance sailed per day (NM), computed from the first and last `log` values of each day's entries.
+- **feat: configurable heartbeat interval** &mdash; Replace fixed hourly log entry with a configurable heartbeat interval (default 30 minutes, range 5–120). Remove unused `displayTimeZone` setting and `timezones-list` dependency.
 - Add JSDoc documentation headers to exported trigger functions.
 - Create this LOG.md file.
 

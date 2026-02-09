@@ -44,7 +44,8 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "js-yaml": "^4.1.0",
-    "pigeon-maps": "^0.21.3",
+    "leaflet": "^1.7.1",
+    "react-leaflet": "^2.8.0",
     "querystring-es3": "^0.2.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -62,12 +63,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@mapbox/geo-viewport": "^0.5.0",
     "circular-buffer": "^1.0.3",
     "jsonschema": "^1.4.1",
     "ordinal": "^1.0.3",
-    "timezones-list": "^3.0.2",
-    "where": "^0.4.1",
     "yaml": "^2.2.1"
   }
 }

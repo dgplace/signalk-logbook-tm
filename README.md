@@ -6,7 +6,7 @@ Semi-automatic logbook for Signal K — Cruise Report Edition
 This is a fork of the Signal K logbook plugin, adapted to serve as a data source for the macOS **Cruise Report** application. It provides both a server-side plugin and a simplified web interface for monitoring semi-automatic logbooks with [Signal K](https://signalk.org). Several things are done automatically:
 
 * Entries written when starting/ending a trip (requires [signalk-autostate](https://github.com/meri-imperiumi/signalk-autostate) plugin)
-* When underway, an entry is created every hour recording the current conditions
+* When underway, a heartbeat entry is created at a configurable interval (default 30 minutes) recording the current conditions
 * Automatic entry when course over ground changes by more than 25°
 
 ## Cruise Report Integration
@@ -25,7 +25,7 @@ The macOS app handles trip aggregation and reporting locally.
 The plugin provides a simplified read-only web interface as part of the [Signal K](https://signalk.org) administration interface. It shows:
 
 * An overview table listing each day that has logbook data, with entry counts.
-* A map view displaying vessel track and log entry positions.
+* A Leaflet map view (OpenStreetMap + OpenSeaMap) displaying vessel track and log entry positions.
 
 ## Data storage and format
 
@@ -70,7 +70,7 @@ The following SignalK paths are used by this logbook.
 
 |SingleK path|Timeline name|YAML path|Notes|
 |-|-|-|-|
-|`navigation.datetime`|Time|`/datetime`|Falls back to system time if not present. Display timezone can be configured.|
+|`navigation.datetime`|Time|`/datetime`|Falls back to system time if not present.|
 |`navigation.courseOverGroundTrue`|Course|`/course`||
 |`navigation.headingTrue`|Heading|`/heading`||
 |`navigation.speedThroughWater`||`/speed/stw`||
@@ -83,10 +83,8 @@ The following SignalK paths are used by this logbook.
 |`navigation.gnss.type`|Fix|`/position/source`|Defaults to "GPS".|
 |`navigation.log`|Log|`/log`||
 |`propulsion.*.runTime`|Engine|`/engine/hours`||
-|`sails.inventory.*`|||Sail changes are logged.|
-|`communication.crewNames`||`/crewNames`|Crew changes are logged.|
 |`steering.autopilot.state`|||Autopilot changes are logged.|
-|`navigation.state`|||If present, used to start and stop automated hourly entries. Changes are logged.|
+|`navigation.state`|||If present, used to start and stop automated heartbeat entries. Changes are logged.|
 |`propulsion.*.state`|||Propulsion changes are logged.|
 |`communication.vhf.channel`||`/vhf`||
 |`navigation.courseRhumbline.nextPoint.position`||`/waypoint`||
@@ -123,10 +121,15 @@ Some additional ideas for the future:
   - Add Cruise Report passerelle: `GET /cruise-report/info` discovery endpoint for macOS Cruise Report app
   - Simplify web UI to read-only overview (day summary table + map)
   - Remove entry/crew/sail editors (editing now handled by Cruise Report macOS app)
+  - Remove `sails.inventory.*` and `communication.crewNames` path subscriptions (crew and sail management now handled by Cruise Report macOS app)
   - Fix duplicate log entries for autopilot and navigation state triggers
   - Add trigger to record when change of heading > 25 degrees
   - Add trigger when new top high SOG for the the trip
   - Add trigger when new top high wind speed
+  - Replace pigeon-maps with Leaflet + react-leaflet (OpenStreetMap + OpenSeaMap tiles, matching @signalk/vesselpositions)
+  - Add daily distance (NM) column to overview table
+  - Replace fixed hourly log interval with configurable heartbeat (default 30 minutes)
+  - Remove unused display timezone setting
 * 0.7.2 (2024-05-13)
   - Fix issue storing entries when `navigation.position` includes altitude
 * 0.7.1 (2024-04-23)

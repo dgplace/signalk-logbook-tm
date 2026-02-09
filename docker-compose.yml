@@ -1,0 +1,11 @@
+services:
+  signalk:
+    image: cr.signalk.io/signalk/signalk-server:latest
+    container_name: signalk
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "10110:10110"        # NMEA0183 out/in if you need it
+      - "8375:8375"          # Signal K TCP stream
+    volumes:
+      - ./signalk:/home/node/.signalk

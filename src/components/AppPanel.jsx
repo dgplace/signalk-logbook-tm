@@ -63,9 +63,18 @@ function AppPanel(props) {
     const dayEntries = entries.filter(
       (e) => new Date(e.datetime).toISOString().substr(0, 10) === date,
     );
+    const logsWithValue = dayEntries
+      .filter((e) => e.log != null && !Number.isNaN(Number(e.log)));
+    let distance = null;
+    if (logsWithValue.length >= 2) {
+      const first = logsWithValue[0].log;
+      const last = logsWithValue[logsWithValue.length - 1].log;
+      distance = parseFloat(Math.abs(last - first).toFixed(1));
+    }
     return {
       date,
       count: dayEntries.length,
+      distance,
     };
   });
   daySummaries.reverse();
@@ -74,7 +83,7 @@ function AppPanel(props) {
     <div>
       <Row className="mb-3 mt-2">
         <Col>
-          <h5>Logbook &mdash; Data Overview</h5>
+          <h5>Cruise Report &mdash; Data Overview</h5>
           <small className="text-muted">
             {days.length} day{days.length !== 1 ? 's' : ''} recorded,
             {' '}
@@ -110,6 +119,7 @@ function AppPanel(props) {
                     <tr>
                       <th>Date</th>
                       <th>Entries</th>
+                      <th>Distance (NM)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -121,11 +131,14 @@ function AppPanel(props) {
                             {day.count}
                           </Badge>
                         </td>
+                        <td>
+                          {day.distance != null ? day.distance : '\u2014'}
+                        </td>
                       </tr>
                     ))}
                     {!daySummaries.length && (
                       <tr>
-                        <td colSpan="2" className="text-muted text-center">
+                        <td colSpan="3" className="text-muted text-center">
                           No logbook data available
                         </td>
                       </tr>

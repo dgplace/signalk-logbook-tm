@@ -1,18 +1,12 @@
 const CircularBuffer = require('circular-buffer');
-const timezones = require('timezones-list');
 const Log = require('./Log');
 const stateToEntry = require('./format');
 const { processTriggers, processHourly, processTwoMinute } = require('./triggers');
 const openAPI = require('../schema/openapi.json');
 const pkg = require('../package.json');
 
-const timezonesList = [
-  {
-    tzCode: 'UTC',
-    label: 'UTC',
-  },
-  ...timezones.default,
-];
+/** Default heartbeat interval in minutes for automatic log entries. */
+const DEFAULT_HEARTBEAT_MINUTES = 30;
 
 function parseJwt(token) {
   if (!token) {
@@ -40,14 +34,6 @@ function sendDelta(app, plugin, time, path, value) {
     ],
   });
 }
-function sendCrewNames(app, plugin) {
-  const { configuration } = app.readPluginOptions();
-  if (!configuration) {
-    return;
-  }
-  sendDelta(app, plugin, new Date(), 'communication.crewNames', configuration.crewNames || []);
-}
-
 module.exports = (app) => {
   const plugin = {};
   let unsubscribes = [];
@@ -78,9 +64,7 @@ module.exports = (app) => {
     'environment.water.swell.state',
     'propulsion.*.state',
     'propulsion.*.runTime',
-    'sails.inventory.*',
     'steering.autopilot.state',
-    'communication.crewNames',
     'communication.vhf.channel',
   ];
 
@@ -91,7 +75,11 @@ module.exports = (app) => {
   let state = {};
   let lastMaxCheck = 0;
 
-  plugin.start = () => {
+  plugin.start = (options) => {
+    const heartbeatMinutes = (options && options.heartbeatInterval)
+      || DEFAULT_HEARTBEAT_MINUTES;
+    let lastHeartbeat = 0;
+
     log = new Log(app.getDataDirPath());
     const subscription = {
       context: 'vessels.self',
@@ -131,7 +119,7 @@ module.exports = (app) => {
               app.setPluginError(`Failed to store entry: ${err.message}`);
             })
             .then(() => {
-              if (u.$source === 'signalk-cruisereport.XX' && v.path !== 'communication.crewNames') {
+              if (u.$source === 'signalk-cruisereport.XX') {
                 // Don't store our reports into state
                 return;
               }
@@ -147,16 +135,16 @@ module.exports = (app) => {
       if (!state.datetime) {
         state.datetime = new Date().toISOString();
       }
-      if (new Date(state.datetime).getMinutes() === 0) {
-        // Store hourly log entry
+      const now = Date.now();
+      if (now - lastHeartbeat >= heartbeatMinutes * 60000) {
+        // Store periodic heartbeat log entry
         processHourly(state, log, app)
           .catch((err) => {
             app.setPluginError(`Failed to store entry: ${err.message}`);
           });
-        sendCrewNames(app, plugin);
+        lastHeartbeat = now;
       }
 
-      const now = Date.now();
       if (now - lastMaxCheck >= 120000) {
         processTwoMinute(state, log, app)
           .then((stateUpdates) => {
@@ -176,48 +164,6 @@ module.exports = (app) => {
         datetime: null,
       };
     }, 60000);
-
-    app.registerPutHandler('vessels.self', 'communication.crewNames', (ctx, path, value, cb) => {
-      if (!Array.isArray(value)) {
-        return {
-          state: 'COMPLETED',
-          statusCode: 400,
-          message: 'crewNames must be an array',
-        };
-      }
-      const faulty = value.findIndex((v) => typeof v !== 'string');
-      if (faulty !== -1) {
-        return {
-          state: 'COMPLETED',
-          statusCode: 400,
-          message: 'Each crewName must be a string',
-        };
-      }
-      let { configuration } = app.readPluginOptions();
-      if (!configuration) {
-        configuration = {};
-      }
-      configuration.crewNames = value;
-      app.savePluginOptions(configuration, (err) => {
-        if (err) {
-          cb({
-            state: 'COMPLETED',
-            statusCode: 500,
-            message: err.message,
-          });
-          return;
-        }
-        sendCrewNames(app, plugin);
-        cb({
-          state: 'COMPLETED',
-          statusCode: 200,
-        });
-      });
-      return {
-        state: 'PENDING',
-      };
-    });
-    sendCrewNames(app, plugin);
 
     setStatus('Waiting for updates');
   };
@@ -368,22 +314,13 @@ module.exports = (app) => {
   plugin.schema = {
     type: 'object',
     properties: {
-      crewNames: {
-        type: 'array',
-        default: [],
-        title: 'Crew list',
-        items: {
-          type: 'string',
-        },
-      },
-      displayTimeZone: {
-        type: 'string',
-        default: 'UTC',
-        title: 'Select the display time zone',
-        oneOf: timezonesList.map((tz) => ({
-          const: tz.tzCode,
-          title: tz.label,
-        })),
+      heartbeatInterval: {
+        type: 'number',
+        default: DEFAULT_HEARTBEAT_MINUTES,
+        title: 'Heartbeat interval (minutes)',
+        description: 'How often an automatic log entry is written while under way.',
+        minimum: 5,
+        maximum: 120,
       },
     },
   };
