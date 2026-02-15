@@ -71,13 +71,25 @@ module.exports = function stateToEntry(state, text, author = '') {
     data.waterTemperature = kelvin2celsius(state['environment.water.temperature']);
   }
 
-  // Handle attitude (yaw, pitch, roll) which can arrive as an object or individual paths
-  const yaw = state['navigation.attitude.yaw']
-    ?? (state['navigation.attitude'] && state['navigation.attitude'].yaw);
-  const pitch = state['navigation.attitude.pitch']
-    ?? (state['navigation.attitude'] && state['navigation.attitude'].pitch);
-  const roll = state['navigation.attitude.roll']
-    ?? (state['navigation.attitude'] && state['navigation.attitude'].roll);
+  // Handle attitude (yaw, pitch, roll) which can arrive as an object or individual paths.
+  // Many sensors don't provide yaw in the attitude object, so we fall back to heading.
+  let yaw = state['navigation.attitude.yaw'];
+  if (yaw === undefined || yaw === null) {
+    yaw = (state['navigation.attitude'] && state['navigation.attitude'].yaw);
+  }
+  if (yaw === undefined || yaw === null) {
+    yaw = state['navigation.headingTrue'];
+  }
+
+  let pitch = state['navigation.attitude.pitch'];
+  if (pitch === undefined || pitch === null) {
+    pitch = (state['navigation.attitude'] && state['navigation.attitude'].pitch);
+  }
+
+  let roll = state['navigation.attitude.roll'];
+  if (roll === undefined || roll === null) {
+    roll = (state['navigation.attitude'] && state['navigation.attitude'].roll);
+  }
 
   if (!Number.isNaN(Number(yaw)) || !Number.isNaN(Number(pitch)) || !Number.isNaN(Number(roll))) {
     data.attitude = {};

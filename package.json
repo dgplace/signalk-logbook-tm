@@ -8,6 +8,7 @@
     "dev": "webpack --watch --mode=development",
     "prebuild": "js-yaml schema/openapi.yaml > schema/openapi.json",
     "build": "webpack --mode=production",
+    "swagger": "node scripts/swagger-local.js",
     "lint": "eslint *.js src/ plugin/",
     "pretest": "npm run build",
     "test": "npm run lint"

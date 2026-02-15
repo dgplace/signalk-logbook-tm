@@ -3,6 +3,8 @@ services:
     image: cr.signalk.io/signalk/signalk-server:latest
     container_name: signalk
     restart: unless-stopped
+    environment:
+      - TZ=Australia/Brisbane
     ports:
       - "3000:3000"
       - "10110:10110"        # NMEA0183 out/in if you need it

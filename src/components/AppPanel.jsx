@@ -12,51 +12,127 @@ import {
 } from 'reactstrap';
 import Map from './Map.jsx';
 
+/** Candidate public API base paths for read-only log access. */
+const PUBLIC_LOG_ENDPOINT_CANDIDATES = [
+  '/signalk/v1/api/cruise-report/logs',
+  '/signalk/v1/api/plugins/signalk-cruisereport/cruise-report/logs',
+  '/signalk/v1/api/plugins/signalk-cruisereport/logs',
+  '/plugins/signalk-cruisereport/logs',
+];
+
+/**
+ * Fetch JSON from an endpoint and throw when the response is not successful.
+ * @param {string} url - HTTP endpoint URL.
+ * @returns {Promise<*>} Parsed JSON response body.
+ */
+async function fetchJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}`.trim());
+  }
+  return response.json();
+}
+
+/**
+ * Resolve the first reachable public API base path for log listing.
+ * @returns {Promise<{basePath: string, dates: string[]}>} Matching base path and date list.
+ */
+async function resolvePublicLogsEndpoint() {
+  const errors = [];
+
+  return PUBLIC_LOG_ENDPOINT_CANDIDATES.reduce(
+    (previousAttempt, basePath) => previousAttempt.catch(() => fetchJson(basePath)
+      .then((dates) => {
+        if (!Array.isArray(dates)) {
+          throw new Error('Response is not a date array');
+        }
+        return { basePath, dates };
+      })
+      .catch((error) => {
+        errors.push(`${basePath} (${error.message})`);
+        throw error;
+      })),
+    Promise.reject(new Error('No public endpoint resolved yet')),
+  ).catch(() => Promise.reject(new Error(errors.join('; '))));
+}
+
+/**
+ * Load all entries for the provided day list from a public API base path.
+ * @param {string} basePath - Public API logs base path.
+ * @param {string[]} dates - Day identifiers in YYYY-MM-DD format.
+ * @returns {Promise<Object[]>} Flat list of log entries.
+ */
+async function loadEntriesForDays(basePath, dates) {
+  const dayEntries = await Promise.all(
+    dates.map((day) => fetchJson(`${basePath}/${encodeURIComponent(day)}`)),
+  );
+  return dayEntries.reduce((allEntries, dailyEntries) => allEntries.concat(dailyEntries), []);
+}
+
 /**
  * Top-level app shell providing a read-only overview of available logbook data.
  * Displays a summary table of days with entry counts and a map view.
- * @param {object} props - Component props from Signal K admin UI.
  */
-function AppPanel(props) {
+function AppPanel() {
   const [days, setDays] = useState([]);
   const [entries, setEntries] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
   const [needsUpdate, setNeedsUpdate] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
-  const loginStatus = props.loginStatus.status;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNeedsUpdate(true);
+    }, 5 * 60000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     if (!needsUpdate) {
       return undefined;
     }
-    if (loginStatus === 'notLoggedIn') {
-      return undefined;
-    }
 
-    const interval = setInterval(() => {
-      setNeedsUpdate(true);
-    }, 5 * 60000);
+    let isCancelled = false;
 
-    fetch('/plugins/signalk-cruisereport/logs')
-      .then((res) => res.json())
-      .then((dates) => {
+    const loadOverview = async () => {
+      try {
+        const { basePath, dates } = await resolvePublicLogsEndpoint();
+        if (isCancelled) {
+          return;
+        }
         setDays(dates);
-        Promise.all(dates.map((day) => fetch(`/plugins/signalk-cruisereport/logs/${day}`)
-          .then((r) => r.json())))
-          .then((dayEntries) => {
-            const all = [].concat.apply([], dayEntries); // eslint-disable-line prefer-spread
-            setEntries(all);
-            setNeedsUpdate(false);
-          });
-      });
-    return () => {
-      clearInterval(interval);
-    };
-  }, [needsUpdate, loginStatus]);
 
-  if (props.loginStatus.status === 'notLoggedIn' && props.loginStatus.authenticationRequired) {
-    return <props.adminUI.Login />;
-  }
+        const allEntries = await loadEntriesForDays(basePath, dates);
+        if (isCancelled) {
+          return;
+        }
+        setEntries(allEntries);
+        setLoadError('');
+      } catch (error) {
+        if (isCancelled) {
+          return;
+        }
+        setDays([]);
+        setEntries([]);
+        setLoadError(
+          'Unable to load log overview from public API. '
+          + `Tried: ${PUBLIC_LOG_ENDPOINT_CANDIDATES.join(', ')}. `
+          + 'Ensure Signal K allows read-only API access.',
+        );
+      } finally {
+        if (!isCancelled) {
+          setNeedsUpdate(false);
+        }
+      }
+    };
+
+    loadOverview();
+    return () => {
+      isCancelled = true;
+    };
+  }, [needsUpdate]);
 
   // Build per-day summaries from entries
   const daySummaries = days.map((date) => {
@@ -89,6 +165,12 @@ function AppPanel(props) {
             {' '}
             {entries.length} total entries
           </small>
+          {loadError && (
+            <>
+              <br />
+              <small className="text-danger">{loadError}</small>
+            </>
+          )}
         </Col>
       </Row>
       <Row>
