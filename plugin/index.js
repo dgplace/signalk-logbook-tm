@@ -276,10 +276,7 @@ module.exports = (app) => {
     'navigation.courseOverGroundTrue',
     'navigation.speedThroughWater',
     'navigation.speedOverGround',
-    'navigation.attitude',
-    'navigation.attitude.roll',
-    'navigation.attitude.pitch',
-    'navigation.attitude.yaw',
+    'navigation.attitude', // attitude object in radians
     'navigation.log',
     'navigation.courseRhumbline.nextPoint.position',
     'environment.outside.pressure',

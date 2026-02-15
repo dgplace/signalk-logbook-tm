@@ -71,21 +71,9 @@ module.exports = function stateToEntry(state, text, author = '') {
     data.waterTemperature = kelvin2celsius(state['environment.water.temperature']);
   }
 
-  // Handle attitude (yaw, pitch, roll) which can arrive as an object or individual paths.
-  let yaw = state['navigation.attitude.yaw'];
-  if (yaw === undefined || yaw === null) {
-    yaw = (state['navigation.attitude'] && state['navigation.attitude'].yaw);
-  }
-
-  let pitch = state['navigation.attitude.pitch'];
-  if (pitch === undefined || pitch === null) {
-    pitch = (state['navigation.attitude'] && state['navigation.attitude'].pitch);
-  }
-
-  let roll = state['navigation.attitude.roll'];
-  if (roll === undefined || roll === null) {
-    roll = (state['navigation.attitude'] && state['navigation.attitude'].roll);
-  }
+  // Handle attitude (yaw, pitch, roll) which arrives as an object.
+  const attitude = state['navigation.attitude'] || {};
+  const { yaw, pitch, roll } = attitude;
 
   if (!Number.isNaN(Number(yaw)) || !Number.isNaN(Number(pitch)) || !Number.isNaN(Number(roll))) {
     data.attitude = {};

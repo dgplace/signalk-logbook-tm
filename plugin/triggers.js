@@ -183,13 +183,10 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       }
       break;
     }
-    case 'navigation.attitude':
-    case 'navigation.attitude.roll': {
-      // roll is heel in radians. Path can be the object or the leaf.
-      const rollValue = (path === 'navigation.attitude') ? value.roll : value;
-
-      if (!Number.isNaN(Number(rollValue))) {
-        const heelDeg = Math.abs(radToDeg(rollValue));
+    case 'navigation.attitude': {
+      // value is attitude object; roll is heel in radians
+      if (value && typeof value === 'object' && !Number.isNaN(Number(value.roll))) {
+        const heelDeg = Math.abs(radToDeg(value.roll));
         const currentCandidate = oldState['custom.logbook.maxHeelCandidate'] || 0;
         if (heelDeg > currentCandidate) {
           const posInfo = app.getSelfPath && app.getSelfPath('navigation.position');
