@@ -72,13 +72,9 @@ module.exports = function stateToEntry(state, text, author = '') {
   }
 
   // Handle attitude (yaw, pitch, roll) which can arrive as an object or individual paths.
-  // Many sensors don't provide yaw in the attitude object, so we fall back to heading.
   let yaw = state['navigation.attitude.yaw'];
   if (yaw === undefined || yaw === null) {
     yaw = (state['navigation.attitude'] && state['navigation.attitude'].yaw);
-  }
-  if (yaw === undefined || yaw === null) {
-    yaw = state['navigation.headingTrue'];
   }
 
   let pitch = state['navigation.attitude.pitch'];
