@@ -25,6 +25,9 @@ fi
 
 echo "Deploying plugin to $TARGET ..."
 
+# Ensure schema is up to date
+npm run prebuild
+
 # Plugin server-side code
 cp -R "$PROJECT_DIR/plugin/"  "$TARGET/plugin/"
 

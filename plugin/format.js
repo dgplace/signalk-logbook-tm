@@ -2,6 +2,21 @@ function rad2deg(rad) {
   return Math.round((rad * 180) / Math.PI);
 }
 
+function rad2deg1(rad) {
+  return parseFloat(((rad * 180) / Math.PI).toFixed(1));
+}
+
+function rad2deg360(rad) {
+  let deg = (rad * 180) / Math.PI;
+  while (deg < 0) deg += 360;
+  while (deg >= 360) deg -= 360;
+  return parseFloat(deg.toFixed(1));
+}
+
+function kelvin2celsius(kelvin) {
+  return parseFloat((kelvin - 273.15).toFixed(1));
+}
+
 function ms2kt(ms) {
   return parseFloat((ms * 1.94384).toFixed(1));
 }
@@ -49,6 +64,34 @@ module.exports = function stateToEntry(state, text, author = '') {
   if (!Number.isNaN(Number(state['environment.outside.pressure']))) {
     data.barometer = parseFloat((state['environment.outside.pressure'] / 100).toFixed(2));
   }
+  if (!Number.isNaN(Number(state['environment.depth.belowTransducer']))) {
+    data.depth = parseFloat(state['environment.depth.belowTransducer'].toFixed(1));
+  }
+  if (!Number.isNaN(Number(state['environment.water.temperature']))) {
+    data.waterTemperature = kelvin2celsius(state['environment.water.temperature']);
+  }
+
+  // Handle attitude (yaw, pitch, roll) which can arrive as an object or individual paths
+  const yaw = state['navigation.attitude.yaw']
+    ?? (state['navigation.attitude'] && state['navigation.attitude'].yaw);
+  const pitch = state['navigation.attitude.pitch']
+    ?? (state['navigation.attitude'] && state['navigation.attitude'].pitch);
+  const roll = state['navigation.attitude.roll']
+    ?? (state['navigation.attitude'] && state['navigation.attitude'].roll);
+
+  if (!Number.isNaN(Number(yaw)) || !Number.isNaN(Number(pitch)) || !Number.isNaN(Number(roll))) {
+    data.attitude = {};
+    if (!Number.isNaN(Number(yaw))) {
+      data.attitude.yaw = rad2deg360(yaw);
+    }
+    if (!Number.isNaN(Number(pitch))) {
+      data.attitude.pitch = rad2deg1(pitch);
+    }
+    if (!Number.isNaN(Number(roll))) {
+      data.attitude.roll = rad2deg1(roll);
+    }
+  }
+
   if (!Number.isNaN(Number(state['environment.wind.speedOverGround']))) {
     if (!data.wind) {
       data.wind = {};

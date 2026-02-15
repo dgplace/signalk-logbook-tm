@@ -2,17 +2,18 @@ openapi: 3.0.3
 info:
   title: Signal K Cruise Report
   description: API for the semi-automatic vessel logbook with Cruise Report integration
-  version: 0.2.0
+  version: 1.0.0
 tags:
   - name: entries
     description: Log entry management
   - name: cruise-report
     description: Cruise Report app integration
 paths:
-  /cruise-report/info:
+  /signalk/v1/api/cruise-report/info:
     get:
       tags:
       - cruise-report
+      operationId: getCruiseReportInfo
       summary: Plugin and vessel info
       description: Returns plugin version, vessel name, and API version for macOS Cruise Report app discovery
       responses:
@@ -22,10 +23,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CruiseReportInfo'
-  /logs:
+  /signalk/v1/api/cruise-report/logs:
     get:
       tags:
       - entries
+      operationId: listPublicLogs
       summary: List logs
       description: Receive a list of days containing logbook entries
       responses:
@@ -35,32 +37,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Logs'
-    post:
-      tags:
-      - entries
-      summary: Create new log entry
-      description: Create a new log entry for either now or up to 15 minutes ago
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewEntry'
-      responses:
-        '201':
-          description: Succesful operation
-  /logs/{date}:
+        '503':
+          description: Log storage not ready
+  /signalk/v1/api/cruise-report/logs/{date}:
     get:
       tags:
-        - entries
+      - entries
+      operationId: listPublicEntriesForDay
       summary: List entries for a day
       description: Receive a list of log entries in a given day
       parameters:
-      - name: date
-        in: path
-        required: true
-        schema:
-          type: string
-          format: date
+      - $ref: '#/components/parameters/DateParam'
       responses:
         '200':
           description: List of entries
@@ -68,80 +55,114 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Log'
-  /logs/{date}/{datetime}:
+        '400':
+          description: Invalid date format
+        '404':
+          description: Date log not found
+        '503':
+          description: Log storage not ready
+  /signalk/v1/api/cruise-report/logs/{date}/{datetime}:
     get:
       tags:
-        - entries
+      - entries
+      operationId: getPublicEntry
       summary: Read individual entry
       description: Receive the contents of an individual entry
       parameters:
-      - name: date
-        in: path
-        required: true
-        schema:
-          type: string
-          format: date
-      - name: datetime
-        in: path
-        required: true
-        schema:
-          type: string
-          format: date-time
+      - $ref: '#/components/parameters/DateParam'
+      - $ref: '#/components/parameters/DateTimeParam'
       responses:
         '200':
-          description: List of entries
+          description: Single entry
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Entry'
+        '404':
+          description: Entry not found
+        '503':
+          description: Log storage not ready
+  /plugins/signalk-cruisereport/logs:
+    post:
+      tags:
+      - entries
+      operationId: createEntry
+      summary: Create new log entry
+      description: Create a new manual log entry for either now or up to 15 minutes ago
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEntry'
+      responses:
+        '201':
+          description: Successful operation
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Requested history window not available
+        '503':
+          description: Log storage not ready
+  /plugins/signalk-cruisereport/logs/{date}/{datetime}:
     put:
       tags:
       - entries
-      parameters:
-      - name: date
-        in: path
-        required: true
-        schema:
-          type: string
-          format: date
-      - name: datetime
-        in: path
-        required: true
-        schema:
-          type: string
-          format: date-time
+      operationId: updateEntry
       summary: Update individual entry
       description: Update the data in an entry
+      parameters:
+      - $ref: '#/components/parameters/DateParam'
+      - $ref: '#/components/parameters/DateTimeParam'
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Entry'
       responses:
         '200':
-          description: Succesful operation
+          description: Successful operation
+        '400':
+          description: Invalid request payload
+        '404':
+          description: Entry not found
+        '503':
+          description: Log storage not ready
     delete:
       tags:
       - entries
-      parameters:
-      - name: date
-        in: path
-        required: true
-        schema:
-          type: string
-          format: date
-      - name: datetime
-        in: path
-        required: true
-        schema:
-          type: string
-          format: date-time
+      operationId: deleteEntry
       summary: Delete individual entry
       description: Delete an entry
+      parameters:
+      - $ref: '#/components/parameters/DateParam'
+      - $ref: '#/components/parameters/DateTimeParam'
       responses:
         '204':
-          description: Succesful operation
+          description: Successful operation
+        '404':
+          description: Entry not found
+        '503':
+          description: Log storage not ready
 components:
+  parameters:
+    DateParam:
+      name: date
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date
+      description: Date bucket in YYYY-MM-DD format.
+    DateTimeParam:
+      name: datetime
+      in: path
+      required: true
+      schema:
+        type: string
+        format: date-time
+      description: Entry datetime identifier in ISO-8601 format.
   schemas:
     CruiseReportInfo:
       type: object
@@ -156,7 +177,7 @@ components:
           example: signalk-cruisereport
         version:
           type: string
-          example: '0.7.2'
+          example: '1.0.0'
         vessel:
           type: string
           example: 'SV Meri'
@@ -191,8 +212,6 @@ components:
     NewEntry:
       type: object
       additionalProperties: false
-      patternProperties:
-        "^custom\\.logbook\\.": {}
       required:
       - text
       properties:
@@ -203,14 +222,72 @@ components:
           type: integer
           minimum: 0
           maximum: 15
+          description: Minutes back in buffered state history.
+        category:
+          type: string
+          enum:
+          - navigation
+          - engine
+          - radio
+          - maintenance
         observations:
           $ref: '#/components/schemas/Observations'
-        'custom.logbook.maxSpeed':
+        position:
+          $ref: '#/components/schemas/Position'
+    Position:
+      type: object
+      required:
+      - latitude
+      - longitude
+      additionalProperties: false
+      properties:
+        latitude:
           type: number
-        'custom.logbook.maxWind':
+          minimum: -90
+          maximum: 90
+          example: 52.5109996
+        longitude:
           type: number
-        'custom.logbook.maxHeel':
+          minimum: -180
+          maximum: 180
+          example: 13.1936481
+        altitude:
           type: number
+          example: 0
+        source:
+          type: string
+          example: GPS
+          default: GPS
+    Waypoint:
+      type: object
+      required:
+      - latitude
+      - longitude
+      additionalProperties: false
+      properties:
+        latitude:
+          type: number
+          minimum: -90
+          maximum: 90
+          example: 52.5109996
+        longitude:
+          type: number
+          minimum: -180
+          maximum: 180
+          example: 13.1936481
+    Attitude:
+      type: object
+      additionalProperties: false
+      properties:
+        yaw:
+          type: number
+          example: 15.2
+        pitch:
+          type: number
+          example: -2.3
+        roll:
+          type: number
+          example: 8.7
     Entry:
       type: object
       additionalProperties: false
@@ -223,51 +300,15 @@ components:
         datetime:
           type: string
           format: date-time
+          example: '2024-08-15T21:00:19.546+02:00'
         position:
-          type: object
-          required:
-          - latitude
-          - longitude
-          additionalProperties: false
-          properties:
-            latitude:
-              type: number
-              minimum: -90
-              maximum: 90
-              example: 52.5109996
-            longitude:
-              type: number
-              minimum: -180
-              maximum: 180
-              example: 13.1936481
-            altitude:
-              type: number
-              example: 0
-            source:
-              type: string
-              example: GPS
-              default: GPS
+          $ref: '#/components/schemas/Position'
         log:
           type: number
           minimum: 0
           example: 0.5
         waypoint:
-          type: object
-          required:
-          - latitude
-          - longitude
-          additionalProperties: false
-          properties:
-            latitude:
-              type: number
-              minimum: -90
-              maximum: 90
-              example: 52.5109996
-            longitude:
-              type: number
-              minimum: -180
-              maximum: 180
-              example: 13.1936481
+          $ref: '#/components/schemas/Waypoint'
         heading:
           type: number
           minimum: 0
@@ -293,6 +334,15 @@ components:
         barometer:
           type: number
           example: 1013.25
+        depth:
+          type: number
+          minimum: 0
+          example: 12.5
+        waterTemperature:
+          type: number
+          example: 22.3
+        attitude:
+          $ref: '#/components/schemas/Attitude'
         wind:
           type: object
           additionalProperties: false
@@ -322,6 +372,7 @@ components:
           example: 10
         crewNames:
           type: array
+          description: Legacy crew list field kept for backward compatibility when reading older log files.
           items:
             type: string
         'custom.logbook.maxSpeed':
