@@ -6,13 +6,6 @@ function rad2deg1(rad) {
   return parseFloat(((rad * 180) / Math.PI).toFixed(1));
 }
 
-function rad2deg360(rad) {
-  let deg = (rad * 180) / Math.PI;
-  while (deg < 0) deg += 360;
-  while (deg >= 360) deg -= 360;
-  return parseFloat(deg.toFixed(1));
-}
-
 function kelvin2celsius(kelvin) {
   return parseFloat((kelvin - 273.15).toFixed(1));
 }
@@ -78,7 +71,7 @@ module.exports = function stateToEntry(state, text, author = '') {
   if (!Number.isNaN(Number(yaw)) || !Number.isNaN(Number(pitch)) || !Number.isNaN(Number(roll))) {
     data.attitude = {};
     if (!Number.isNaN(Number(yaw))) {
-      data.attitude.yaw = rad2deg360(yaw);
+      data.attitude.yaw = rad2deg1(yaw);
     }
     if (!Number.isNaN(Number(pitch))) {
       data.attitude.pitch = rad2deg1(pitch);
