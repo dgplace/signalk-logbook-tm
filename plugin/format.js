@@ -57,8 +57,8 @@ module.exports = function stateToEntry(state, text, author = '') {
   if (!Number.isNaN(Number(state['environment.outside.pressure']))) {
     data.barometer = parseFloat((state['environment.outside.pressure'] / 100).toFixed(2));
   }
-  if (!Number.isNaN(Number(state['environment.depth.belowTransducer']))) {
-    data.depth = parseFloat(state['environment.depth.belowTransducer'].toFixed(1));
+  if (!Number.isNaN(Number(state['environment.depth.belowSurface']))) {
+    data.depth = parseFloat(state['environment.depth.belowSurface'].toFixed(1));
   }
   if (!Number.isNaN(Number(state['environment.water.temperature']))) {
     data.waterTemperature = kelvin2celsius(state['environment.water.temperature']);

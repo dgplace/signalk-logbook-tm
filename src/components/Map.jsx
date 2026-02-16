@@ -44,6 +44,14 @@ function Map(props) {
     })),
   );
 
+  // Update points when entries change
+  useEffect(() => {
+    setPoints(entries.map((e) => ({
+      lat: e.position.latitude,
+      lon: e.position.longitude,
+    })));
+  }, [props.entries]);
+
   const mapRef = useRef(null);
 
   // Fit map bounds whenever points change

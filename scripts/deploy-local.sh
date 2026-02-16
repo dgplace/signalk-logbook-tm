@@ -28,10 +28,13 @@ echo "Deploying plugin to $TARGET ..."
 # Ensure schema is up to date
 npm run prebuild
 
+# Build webapp so public/ reflects latest src/ changes
+npm run build
+
 # Plugin server-side code
 cp -R "$PROJECT_DIR/plugin/"  "$TARGET/plugin/"
 
-# Built webapp (run 'npm run build' first if you changed src/)
+# Built webapp
 cp -R "$PROJECT_DIR/public/"  "$TARGET/public/"
 
 # Schema files

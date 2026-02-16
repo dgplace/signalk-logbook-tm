@@ -100,7 +100,7 @@ The following SignalK paths are used by this logbook.
 |`environment.wind.directionTrue`|Wind|`/wind/direction`||
 |`environment.wind.speedOverGround`|Wind|`/wind/speed`||
 |`environment.outside.pressure`|Baro|`/barometer`||
-|`environment.depth.belowTransducer`|Depth|`/depth`|Meters.|
+|`environment.depth.belowSurface`|Depth|`/depth`|Meters.|
 |`environment.water.temperature`|Temp|`/waterTemperature`|Degrees Celsius.|
 |`environment.water.swell.state`|Sea|`/observations/seaState`||
 |`navigation.position`|Coordinates|`/position/longitude` `/position/latitude`||

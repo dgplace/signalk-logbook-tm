@@ -280,7 +280,7 @@ module.exports = (app) => {
     'navigation.log',
     'navigation.courseRhumbline.nextPoint.position',
     'environment.outside.pressure',
-    'environment.depth.belowTransducer',
+    'environment.depth.belowSurface',
     'environment.water.temperature',
     'environment.wind.directionTrue',
     'environment.wind.speedOverGround',
@@ -351,7 +351,19 @@ module.exports = (app) => {
                 return;
               }
               // Copy new value into state
-              state[v.path] = v.value;
+              if (v.path === 'navigation.attitude' && typeof v.value === 'object' && v.value !== null) {
+                const current = state[v.path] || {};
+                const updates = v.value;
+                const merged = { ...current };
+                Object.keys(updates).forEach((key) => {
+                  if (updates[key] !== null && typeof updates[key] !== 'undefined') {
+                    merged[key] = updates[key];
+                  }
+                });
+                state[v.path] = merged;
+              } else {
+                state[v.path] = v.value;
+              }
             })), Promise.resolve());
         }), Promise.resolve());
       },

@@ -102,7 +102,7 @@ function AppPanel() {
         if (isCancelled) {
           return;
         }
-        setDays(dates);
+        setDays([...dates].sort());
 
         const allEntries = await loadEntriesForDays(basePath, dates);
         if (isCancelled) {
@@ -137,7 +137,7 @@ function AppPanel() {
   // Build per-day summaries from entries
   const daySummaries = days.map((date) => {
     const dayEntries = entries.filter(
-      (e) => new Date(e.datetime).toISOString().substr(0, 10) === date,
+      (e) => e.datetime.substr(0, 10) === date,
     );
     const logsWithValue = dayEntries
       .filter((e) => e.log != null && !Number.isNaN(Number(e.log)));
@@ -230,7 +230,13 @@ function AppPanel() {
               )}
             </TabPane>
             <TabPane tabId="map">
-              {activeTab === 'map' && <Map entries={entries} />}
+              {activeTab === 'map' && (
+                <Map
+                  entries={entries.filter(
+                    (e) => days.length > 0 && e.datetime.substr(0, 10) === days[days.length - 1],
+                  )}
+                />
+              )}
             </TabPane>
           </TabContent>
         </Col>
