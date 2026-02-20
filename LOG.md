@@ -45,6 +45,7 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 ## Change Log
 
 ### Unreleased
+- **fix: restore npm test lint pass for Leaflet marker shim** &mdash; Move `leaflet` from `devDependencies` to `dependencies` in `package.json` so runtime imports in `src/components/leaflet-hack.js` satisfy `import/no-extraneous-dependencies`, and add a targeted `no-underscore-dangle` lint override for the required Leaflet internal `_getIconUrl` delete.
 - **chore: bump npm package version to 1.0.1** &mdash; Update `package.json` and `package-lock.json` from `1.0.0` to `1.0.1` in preparation for packaging and distribution.
 - **feat: restrict map view to the latest log file** &mdash; Update `src/components/AppPanel.jsx` to pass only the entries from the most recent day to the `Map` component, ensuring the `days` list is sorted correctly. Added reactivity to `src/components/Map.jsx` so the track and markers refresh immediately when the log data changes.
 - **fix: deploy-local.sh skips webapp build** &mdash; Add `npm run build` step to `scripts/deploy-local.sh` before copying `public/` so that `src/` changes are compiled into the bundle. Previously the script only ran `npm run prebuild` (schema generation), leaving a stale webpack bundle when source files had changed.

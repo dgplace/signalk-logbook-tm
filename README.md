@@ -172,6 +172,7 @@ Some additional ideas for the future:
 ## Changes
 
 * This repo
+  - Fix npm lint/test failure by moving `leaflet` to runtime dependencies and applying a targeted ESLint exception for Leaflet marker icon shim internals
   - Bump npm package version from `1.0.0` to `1.0.1` for packaging and distribution
   - Hardcode Signal K container timezone in `docker-compose.yml` with `TZ=Australia/Brisbane` to avoid Docker Desktop host-timezone mount mismatches
   - Refresh OpenAPI/Swagger spec to document public read-only `/signalk/v1/api/cruise-report/*` routes and authenticated plugin write routes under `/plugins/signalk-cruisereport/*`
