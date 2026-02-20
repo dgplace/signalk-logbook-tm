@@ -172,6 +172,7 @@ Some additional ideas for the future:
 ## Changes
 
 * This repo
+  - Bump npm package version from `1.0.0` to `1.0.1` for packaging and distribution
   - Hardcode Signal K container timezone in `docker-compose.yml` with `TZ=Australia/Brisbane` to avoid Docker Desktop host-timezone mount mismatches
   - Refresh OpenAPI/Swagger spec to document public read-only `/signalk/v1/api/cruise-report/*` routes and authenticated plugin write routes under `/plugins/signalk-cruisereport/*`
   - Fix web overview to use public read-only `/signalk/v1/api/cruise-report/logs*` routes instead of authenticated plugin routes, removing forced login prompt for read-only access
