@@ -1,13 +1,13 @@
 openapi: 3.0.3
 info:
   title: Signal K Cruise Report
-  description: API for the semi-automatic vessel logbook with Cruise Report integration
+  description: API for the semi-automatic vessel logbook with Trip Report integration
   version: 1.0.0
 tags:
   - name: entries
     description: Log entry management
   - name: cruise-report
-    description: Cruise Report app integration
+    description: Trip Report app integration
 paths:
   /signalk/v1/api/cruise-report/info:
     get:
@@ -15,7 +15,7 @@ paths:
       - cruise-report
       operationId: getCruiseReportInfo
       summary: Plugin and vessel info
-      description: Returns plugin version, vessel name, and API version for macOS Cruise Report app discovery
+      description: Returns plugin version, vessel name, and API version for macOS Trip Report app discovery
       responses:
         '200':
           description: Plugin metadata

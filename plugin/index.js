@@ -66,7 +66,7 @@ const LOG_TIME_ZONE_ENUM = buildLogTimeZoneEnum(LOG_TIME_ZONE_DEFAULT, SUPPORTED
  * @property {string} plugin Plugin identifier.
  * @property {string} version Plugin version.
  * @property {string} vessel Vessel name, if available.
- * @property {number} apiVersion Cruise Report API version.
+ * @property {number} apiVersion Trip Report API version.
  */
 
 /**
@@ -111,7 +111,7 @@ function sendDelta(app, plugin, time, path, value) {
 }
 
 /**
- * Build Cruise Report discovery metadata.
+ * Build Trip Report discovery metadata.
  * @param {Object} app Signal K app instance.
  * @param {Object} plugin Plugin metadata object.
  * @returns {CruiseReportInfo} Discovery payload.
@@ -187,7 +187,7 @@ function resolveLogTimeZone(options, app) {
  */
 function registerReadOnlyRoutes(router, app, plugin, getLog, handleError, paths) {
   /**
-   * Returns plugin and vessel metadata for macOS Cruise Report app discovery.
+   * Returns plugin and vessel metadata for macOS Trip Report app discovery.
    * @route GET /cruise-report/info
    * @returns {CruiseReportInfo}
    */
@@ -262,7 +262,7 @@ module.exports = (app) => {
 
   plugin.id = 'signalk-cruisereport';
   plugin.name = 'Cruise Report';
-  plugin.description = 'Semi-automatic electronic logbook for sailing vessels with Cruise Report integration';
+  plugin.description = 'Semi-automatic electronic logbook for sailing vessels with Trip Report integration';
 
   const setStatus = app.setPluginStatus || app.setProviderStatus;
 

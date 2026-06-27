@@ -1,18 +1,18 @@
-Semi-automatic logbook for Signal K — Cruise Report Edition
+Semi-automatic logbook for Signal K — Trip Report Edition
 ============================================================
 
 > **Based on** [signalk-logbook](https://github.com/meri-imperiumi/signalk-logbook) by Henri Bergius. Original code licensed under MIT.
 
-This is a fork of the Signal K logbook plugin, adapted to serve as a data source for the macOS **Cruise Report** application. It provides both a server-side plugin and a simplified web interface for monitoring semi-automatic logbooks with [Signal K](https://signalk.org). Several things are done automatically:
+This is a fork of the Signal K logbook plugin, adapted to serve as a data source for the macOS **Trip Report** application. It provides both a server-side plugin and a simplified web interface for monitoring semi-automatic logbooks with [Signal K](https://signalk.org). Several things are done automatically:
 
 * Entries written when starting/ending a trip (requires [signalk-autostate](https://github.com/meri-imperiumi/signalk-autostate) plugin)
 * When underway, a heartbeat entry is created at a configurable interval (default 30 minutes) recording the current conditions
 * Automatic entry when course over ground changes by more than 25° (with configurable settle delay to filter wave-induced oscillations)
 * Log timezone is configurable (defaults to the Signal K host computer timezone and is preselected as the first option in plugin settings)
 
-## Cruise Report Integration
+## Trip Report Integration
 
-This plugin acts as a passerelle (bridge) for the macOS **Cruise Report** application. The macOS app can:
+This plugin acts as a passerelle (bridge) for the macOS **Trip Report** application. The macOS app can:
 
 1. Discover the Signal K server via mDNS (`_signalk-http._tcp`) or by entering the server IP address manually.
 2. Call `GET /signalk/v1/api/cruise-report/info` to confirm a compatible logbook plugin is running and retrieve vessel metadata.
@@ -123,7 +123,7 @@ Public read-only endpoints (available without login when Signal K `allow_readonl
 
 | Method | Path | Description |
 |---|---|---|
-| `GET` | `/signalk/v1/api/cruise-report/info` | Plugin version, vessel name, and API version for Cruise Report app discovery |
+| `GET` | `/signalk/v1/api/cruise-report/info` | Plugin version, vessel name, and API version for Trip Report app discovery |
 | `GET` | `/signalk/v1/api/cruise-report/logs` | List of dates with logbook entries |
 | `GET` | `/signalk/v1/api/cruise-report/logs/{date}` | All entries for a given day |
 | `GET` | `/signalk/v1/api/cruise-report/logs/{date}/{datetime}` | Single entry |
@@ -172,6 +172,8 @@ Some additional ideas for the future:
 ## Changes
 
 * This repo
+  - Rename macOS integration references from Cruise Report to Trip Report while retaining compatible package, type, and API route identifiers
+  - Bump npm package version from `1.0.1` to `1.0.2` for release
   - Fix npm lint/test failure by moving `leaflet` to runtime dependencies and applying a targeted ESLint exception for Leaflet marker icon shim internals
   - Bump npm package version from `1.0.0` to `1.0.1` for packaging and distribution
   - Hardcode Signal K container timezone in `docker-compose.yml` with `TZ=Australia/Brisbane` to avoid Docker Desktop host-timezone mount mismatches
@@ -181,10 +183,10 @@ Some additional ideas for the future:
   - Extend web overview fallback to include legacy plugin API path `/signalk/v1/api/plugins/signalk-cruisereport/logs` (and direct `/plugins/signalk-cruisereport/logs` as last fallback)
   - Fix legacy log read compatibility by allowing `crewNames` in entry schema and resolving OpenAPI schema `$ref` links during runtime validation
   - Ensure plugin `logTimeZone` config defaults to the computer timezone by placing it first in the timezone enum list
-  - Add Cruise Report passerelle: `GET /cruise-report/info` discovery endpoint for macOS Cruise Report app
+  - Add Trip Report passerelle: `GET /cruise-report/info` discovery endpoint for macOS Trip Report app
   - Simplify web UI to read-only overview (day summary table + map)
-  - Remove entry/crew/sail editors (editing now handled by Cruise Report macOS app)
-  - Remove `sails.inventory.*` and `communication.crewNames` path subscriptions (crew and sail management now handled by Cruise Report macOS app)
+  - Remove entry/crew/sail editors (editing now handled by Trip Report macOS app)
+  - Remove `sails.inventory.*` and `communication.crewNames` path subscriptions (crew and sail management now handled by Trip Report macOS app)
   - Fix duplicate log entries for autopilot and navigation state triggers
   - Add trigger to record when change of heading > 25 degrees
   - Add trigger when new top high SOG for the the trip
