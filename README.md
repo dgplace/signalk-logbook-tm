@@ -8,6 +8,7 @@ This is a fork of the Signal K logbook plugin, adapted to serve as a data source
 * Entries written when starting/ending a trip (requires [signalk-autostate](https://github.com/meri-imperiumi/signalk-autostate) plugin)
 * When underway, a heartbeat entry is created at a configurable interval (default 30 minutes) recording the current conditions
 * Automatic entry when course over ground changes by more than 25° (with configurable settle delay to filter wave-induced oscillations)
+* New minimum positive depth records are checked every two minutes while underway
 * Log timezone is configurable (defaults to the Signal K host computer timezone and is preselected as the first option in plugin settings)
 
 ## Trip Report Integration
@@ -100,7 +101,7 @@ The following SignalK paths are used by this logbook.
 |`environment.wind.directionTrue`|Wind|`/wind/direction`||
 |`environment.wind.speedOverGround`|Wind|`/wind/speed`||
 |`environment.outside.pressure`|Baro|`/barometer`||
-|`environment.depth.belowSurface`|Depth|`/depth`|Meters.|
+|`environment.depth.belowSurface`|Depth|`/depth`|Meters. New minimum positive values are logged every two minutes while underway.|
 |`environment.water.temperature`|Temp|`/waterTemperature`|Degrees Celsius.|
 |`environment.water.swell.state`|Sea|`/observations/seaState`||
 |`navigation.position`|Coordinates|`/position/longitude` `/position/latitude`||
@@ -172,6 +173,8 @@ Some additional ideas for the future:
 ## Changes
 
 * This repo
+  - Bump npm package version from `1.0.2` to `1.0.3` for release
+  - Add a two-minute automatic trigger for new minimum positive depth records while sailing or motoring
   - Rename macOS integration references from Cruise Report to Trip Report while retaining compatible package, type, and API route identifiers
   - Bump npm package version from `1.0.1` to `1.0.2` for release
   - Fix npm lint/test failure by moving `leaflet` to runtime dependencies and applying a targeted ESLint exception for Leaflet marker icon shim internals

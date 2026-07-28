@@ -183,6 +183,21 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
       }
       break;
     }
+    case 'environment.depth.belowSurface': {
+      if (!isUnderWay(oldState) || !Number.isFinite(value) || value <= 0) {
+        break;
+      }
+      const currentCandidate = oldState['custom.logbook.minDepthCandidate'];
+      if (typeof currentCandidate !== 'number' || value < currentCandidate) {
+        const posInfo = app.getSelfPath && app.getSelfPath('navigation.position');
+        const pos = posInfo && posInfo.value ? posInfo.value : oldState['navigation.position'];
+        return Promise.resolve({
+          'custom.logbook.minDepthCandidate': value,
+          'custom.logbook.minDepthCandidatePosition': pos,
+        });
+      }
+      break;
+    }
     case 'navigation.attitude': {
       // value is attitude object; roll is heel in radians
       if (value && typeof value === 'object' && !Number.isNaN(Number(value.roll))) {
@@ -328,14 +343,18 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
           'custom.logbook.maxHeel': 0,
+          'custom.logbook.minDepth': undefined,
         }).then(() => ({
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
           'custom.logbook.maxHeel': 0,
+          'custom.logbook.minDepth': undefined,
           'custom.logbook.lastCourse': undefined,
+          'custom.logbook.minDepthCandidate': undefined,
           'custom.logbook.maxSpeedCandidatePosition': undefined,
           'custom.logbook.maxWindCandidatePosition': undefined,
           'custom.logbook.maxHeelCandidatePosition': undefined,
+          'custom.logbook.minDepthCandidatePosition': undefined,
         }));
       }
       if (value === 'sailing') {
@@ -369,14 +388,18 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
           'custom.logbook.maxHeel': 0,
+          'custom.logbook.minDepth': undefined,
         }).then(() => ({
           'custom.logbook.maxSpeed': 0,
           'custom.logbook.maxWind': 0,
           'custom.logbook.maxHeel': 0,
+          'custom.logbook.minDepth': undefined,
           'custom.logbook.lastCourse': undefined,
+          'custom.logbook.minDepthCandidate': undefined,
           'custom.logbook.maxSpeedCandidatePosition': undefined,
           'custom.logbook.maxWindCandidatePosition': undefined,
           'custom.logbook.maxHeelCandidatePosition': undefined,
+          'custom.logbook.minDepthCandidatePosition': undefined,
         }));
       }
       break;
@@ -433,7 +456,7 @@ exports.processTriggers = function processTriggers(path, value, oldState, log, a
 
 /**
  * Periodic check (every ~2 minutes) that promotes max-value candidates
- * (speed, wind, heel) into permanent records by writing log entries.
+ * (speed, wind, heel, depth) into permanent records by writing log entries.
  *
  * @param {Object<string, *>} oldState - Shared plugin state.
  * @param {import('./Log')} log - Log instance for persisting entries.
@@ -445,9 +468,11 @@ exports.processTwoMinute = function processTwoMinute(oldState, log, app) {
     'custom.logbook.maxSpeedCandidate': 0,
     'custom.logbook.maxWindCandidate': 0,
     'custom.logbook.maxHeelCandidate': 0,
+    'custom.logbook.minDepthCandidate': undefined,
     'custom.logbook.maxSpeedCandidatePosition': undefined,
     'custom.logbook.maxWindCandidatePosition': undefined,
     'custom.logbook.maxHeelCandidatePosition': undefined,
+    'custom.logbook.minDepthCandidatePosition': undefined,
   };
 
   if (!isUnderWay(oldState)) {
@@ -485,6 +510,25 @@ exports.processTwoMinute = function processTwoMinute(oldState, log, app) {
       'custom.logbook.maxHeel': heel,
     })).then(() => {
       updates['custom.logbook.maxHeel'] = heel;
+    });
+  }
+
+  const minimumDepth = oldState['custom.logbook.minDepth'];
+  const depthCandidate = oldState['custom.logbook.minDepthCandidate'];
+  if (typeof depthCandidate === 'number'
+      && (typeof minimumDepth !== 'number' || depthCandidate < minimumDepth)) {
+    promise = promise.then(() => appendLog(
+      oldState,
+      log,
+      app,
+      `New minimum depth record: ${depthCandidate.toFixed(1)} m`,
+      {
+        depth: depthCandidate,
+        position: oldState['custom.logbook.minDepthCandidatePosition'],
+        'custom.logbook.minDepth': depthCandidate,
+      },
+    )).then(() => {
+      updates['custom.logbook.minDepth'] = depthCandidate;
     });
   }
 

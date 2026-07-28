@@ -381,6 +381,9 @@ components:
           type: number
         'custom.logbook.maxHeel':
           type: number
+        'custom.logbook.minDepth':
+          type: number
+          minimum: 0
         end:
           type: boolean
           default: false

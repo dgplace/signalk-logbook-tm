@@ -7,9 +7,9 @@ For Docker deployments in this repository, the Signal K container timezone is ha
 
 ### Data Flow
 
-1. **Signal K subscriptions** &rarr; `plugin/index.js` subscribes to ~16 paths (position, speed, wind, state, etc.) at 1-second intervals.
-2. **Trigger processing** &rarr; each delta update is passed to `processTriggers()` which decides whether to create an automatic log entry (e.g. course change > 25&deg;, autopilot toggle, vessel state transition).
-3. **Periodic checks** &rarr; a 60-second interval drives configurable heartbeat log entries (`processHourly`, default every 30 min) and a 2-minute max-record promotion cycle (`processTwoMinute`).
+1. **Signal K subscriptions** &rarr; `plugin/index.js` subscribes to 21 paths (position, speed, wind, depth, state, etc.) at 1-second intervals.
+2. **Trigger processing** &rarr; each delta update is passed to `processTriggers()` which decides whether to create an automatic log entry or retain a record candidate (e.g. course change > 25&deg;, autopilot toggle, vessel state transition, minimum positive depth).
+3. **Periodic checks** &rarr; a 60-second interval drives configurable heartbeat log entries (`processHourly`, default every 30 min) and a 2-minute record promotion cycle (`processTwoMinute`) for maximum speed, wind, heel, and minimum depth while under way.
 4. **Persistence** &rarr; the `Log` class writes/reads YAML files in `~/.signalk/plugin-config-data/signalk-cruisereport/YYYY-MM-DD.yml`, with day bucketing and stored `datetime` offsets based on the configured log timezone (default: host computer timezone).
 5. **REST API** &rarr; `plugin/index.js` exposes read-only endpoints on both plugin routes and Signal K API routes (`GET /signalk/v1/api/cruise-report/info`, `GET /signalk/v1/api/cruise-report/logs`, `GET /signalk/v1/api/cruise-report/logs/:date`, `GET /signalk/v1/api/cruise-report/logs/:date/:entry`), while write endpoints (`POST /logs`, `PUT/DELETE /logs/:date/:entry`) remain available only on authenticated plugin routes.
 6. **Web UI** &rarr; Simplified React SPA served as an embedded Signal K webapp; provides a read-only overview of available data (day summary table and map view) by reading compatible read-only routes, including `/signalk/v1/api/cruise-report/*`, `/signalk/v1/api/plugins/signalk-cruisereport/cruise-report/*`, and legacy `/signalk/v1/api/plugins/signalk-cruisereport/logs`.
@@ -23,7 +23,7 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 | File | Purpose |
 |---|---|
 | `plugin/index.js` | Main Signal K plugin entry point. Manages subscriptions, state buffer, periodic timers, dual read-only API routing (`registerWithRouter` + `signalKApiRoutes`), authenticated write routes, and plugin configuration schema. |
-| `plugin/triggers.js` | Event detection logic. `processTriggers()` handles per-update triggers; `processTwoMinute()` promotes max-value candidates; `processHourly()` writes heartbeat entries. |
+| `plugin/triggers.js` | Event detection logic. `processTriggers()` handles per-update triggers; `processTwoMinute()` promotes maximum-value and minimum-depth candidates; `processHourly()` writes heartbeat entries. |
 | `plugin/format.js` | `stateToEntry()` converts the in-memory state object into a human-friendly log entry (degrees, knots, hPa, NM). |
 | `plugin/Log.js` | `Log` class providing YAML-based persistence with JSON-Schema validation, file-per-day storage, and a write queue to serialise concurrent writes. |
 | `plugin/timezone.js` | Shared timezone helpers for validating IANA timezone IDs, formatting persisted datetimes with offsets, and deriving timezone-local day strings for file naming. |
@@ -45,6 +45,8 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 ## Change Log
 
 ### Unreleased
+- **release: prepare version 1.0.3** &mdash; Bump the npm package version from `1.0.2` to `1.0.3` for the minimum-depth record release.
+- **feat: log new minimum depth records while under way** &mdash; Track the lowest positive `environment.depth.belowSurface` sample and promote it to an automatic log entry during the two-minute record check while sailing or motoring. Preserve the sampled depth and position, reset the record at trip end, document the trigger, and add focused regression coverage.
 - **release: prepare version 1.0.2 for Trip Report integration** &mdash; Rename current-facing macOS integration descriptions from Cruise Report to Trip Report across package metadata, plugin documentation, README, and OpenAPI documentation while retaining compatible package, type, and route identifiers. Bump the npm package version from `1.0.1` to `1.0.2`.
 - **fix: restore npm test lint pass for Leaflet marker shim** &mdash; Move `leaflet` from `devDependencies` to `dependencies` in `package.json` so runtime imports in `src/components/leaflet-hack.js` satisfy `import/no-extraneous-dependencies`, and add a targeted `no-underscore-dangle` lint override for the required Leaflet internal `_getIconUrl` delete.
 - **chore: bump npm package version to 1.0.1** &mdash; Update `package.json` and `package-lock.json` from `1.0.0` to `1.0.1` in preparation for packaging and distribution.
