@@ -3,6 +3,11 @@
   "version": "1.0.3",
   "description": "Semi-automatic electronic logbook for Signal K with Trip Report integration",
   "main": "plugin/index.js",
+  "files": [
+    "plugin/",
+    "public/",
+    "schema/"
+  ],
   "scripts": {
     "prepublishOnly": "npm run build",
     "dev": "webpack --watch --mode=development",

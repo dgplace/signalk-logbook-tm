@@ -45,6 +45,7 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 ## Change Log
 
 ### Unreleased
+- **chore: restrict npm package contents** &mdash; Add an explicit runtime-file allowlist so published packages contain only plugin code, the built webapp, schemas, and npm's standard metadata instead of local settings, sample logs, tests, workflows, development files, or nested package archives.
 - **release: prepare version 1.0.3** &mdash; Bump the npm package version from `1.0.2` to `1.0.3` for the minimum-depth record release.
 - **feat: log new minimum depth records while under way** &mdash; Track the lowest positive `environment.depth.belowSurface` sample and promote it to an automatic log entry during the two-minute record check while sailing or motoring. Preserve the sampled depth and position, reset the record at trip end, document the trigger, and add focused regression coverage.
 - **release: prepare version 1.0.2 for Trip Report integration** &mdash; Rename current-facing macOS integration descriptions from Cruise Report to Trip Report across package metadata, plugin documentation, README, and OpenAPI documentation while retaining compatible package, type, and route identifiers. Bump the npm package version from `1.0.1` to `1.0.2`.

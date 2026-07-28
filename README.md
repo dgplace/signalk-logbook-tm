@@ -173,6 +173,7 @@ Some additional ideas for the future:
 ## Changes
 
 * This repo
+  - Restrict npm publication contents to runtime plugin, webapp, and schema files
   - Bump npm package version from `1.0.2` to `1.0.3` for release
   - Add a two-minute automatic trigger for new minimum positive depth records while sailing or motoring
   - Rename macOS integration references from Cruise Report to Trip Report while retaining compatible package, type, and API route identifiers
