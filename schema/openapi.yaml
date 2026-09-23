@@ -288,6 +288,16 @@ components:
         roll:
           type: number
           example: 8.7
+    PropulsionEngine:
+      type: object
+      additionalProperties: false
+      required:
+      - state
+      properties:
+        state:
+          type: string
+          description: Live Signal K `propulsion.<id>.state` value (typically `started` or `stopped`).
+          example: started
     Entry:
       type: object
       additionalProperties: false
@@ -365,6 +375,24 @@ components:
             hours:
               type: number
               minimum: 0
+        navigationState:
+          type: string
+          description: >
+            Live vessel underway state copied from Signal K `navigation.state`
+            when present (for example `sailing`, `motoring`, `anchored`, `moored`).
+            Omitted when the path is unpublished. Never invented by the plugin.
+          example: sailing
+        propulsion:
+          type: object
+          description: >
+            Per-engine live state copied from Signal K `propulsion.<id>.state`
+            when present. Keys are engine identifiers. Omitted when no engine
+            publishes state. Independent of `engine.hours`.
+          additionalProperties:
+            $ref: '#/components/schemas/PropulsionEngine'
+          example:
+            port:
+              state: started
         vhf:
           type: string
           maxLength: 2
