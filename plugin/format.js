@@ -1,19 +1,116 @@
+/**
+ * @typedef {Object} PropulsionEngineState
+ * @property {string} state Live Signal K propulsion engine state (e.g. started, stopped).
+ */
+
+/**
+ * @typedef {Object<string, PropulsionEngineState>} PropulsionStateMap
+ * Map of engine identifiers to their live Signal K state.
+ */
+
+/**
+ * Convert radians to integer degrees.
+ *
+ * @param {number} rad - Angle in radians.
+ * @returns {number} Angle in whole degrees.
+ */
 function rad2deg(rad) {
   return Math.round((rad * 180) / Math.PI);
 }
 
+/**
+ * Convert radians to degrees with one decimal place.
+ *
+ * @param {number} rad - Angle in radians.
+ * @returns {number} Angle in degrees.
+ */
 function rad2deg1(rad) {
   return parseFloat(((rad * 180) / Math.PI).toFixed(1));
 }
 
+/**
+ * Convert Kelvin to Celsius with one decimal place.
+ *
+ * @param {number} kelvin - Temperature in Kelvin.
+ * @returns {number} Temperature in Celsius.
+ */
 function kelvin2celsius(kelvin) {
   return parseFloat((kelvin - 273.15).toFixed(1));
 }
 
+/**
+ * Convert metres per second to knots with one decimal place.
+ *
+ * @param {number} ms - Speed in metres per second.
+ * @returns {number} Speed in knots.
+ */
 function ms2kt(ms) {
   return parseFloat((ms * 1.94384).toFixed(1));
 }
 
+/**
+ * Return a present Signal K state string, or null when the value is absent.
+ * Empty or non-string values are treated as missing; no motoring/sailing
+ * state is invented.
+ *
+ * @param {*} value - Candidate state value from the vessel buffer.
+ * @returns {string|null} State string, or null when unpublished.
+ */
+function presentStateString(value) {
+  if (typeof value !== 'string') {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed === '' ? null : trimmed;
+}
+
+/**
+ * Return present `navigation.state` from buffered vessel state.
+ *
+ * @param {Object<string, *>} state - Buffered vessel state keyed by Signal K path.
+ * @returns {string|null} Live navigation state, or null when unpublished.
+ */
+function readNavigationState(state) {
+  return presentStateString(state['navigation.state']);
+}
+
+/**
+ * Collect present `propulsion.<id>.state` values as a map of engine states.
+ * Engines without a published state are omitted. Does not read `engine.hours`.
+ *
+ * @param {Object<string, *>} state - Buffered vessel state keyed by Signal K path.
+ * @returns {PropulsionStateMap|null} Engine-id map, or null when none published.
+ */
+function readPropulsionState(state) {
+  const propulsion = {};
+  Object.keys(state).forEach((key) => {
+    const match = key.match(/^propulsion\.([A-Za-z0-9]+)\.state$/);
+    if (!match) {
+      return;
+    }
+    const engineState = presentStateString(state[key]);
+    if (!engineState) {
+      return;
+    }
+    propulsion[match[1]] = {
+      state: engineState,
+    };
+  });
+  if (Object.keys(propulsion).length === 0) {
+    return null;
+  }
+  return propulsion;
+}
+
+/**
+ * Convert buffered Signal K vessel state into a human-friendly log entry.
+ *
+ * @param {Object<string, *>} state - Buffered vessel state keyed by Signal K path.
+ * @param {string} text - Human-readable description of the event.
+ * @param {string} [author=''] - Entry author, empty for automatic entries.
+ * @returns {Object<string, *>} Log entry including optional `navigationState`
+ *   and `propulsion` fields when those Signal K paths are present.
+ */
 module.exports = function stateToEntry(state, text, author = '') {
   const data = {
     datetime: state['navigation.datetime'] || new Date().toISOString(),
@@ -122,6 +219,14 @@ module.exports = function stateToEntry(state, text, author = '') {
       data.engine.hours = parseFloat((state[key] / 60 / 60).toFixed(1));
     }
   });
+  const propulsion = readPropulsionState(state);
+  if (propulsion) {
+    data.propulsion = propulsion;
+  }
+  const navigationState = readNavigationState(state);
+  if (navigationState) {
+    data.navigationState = navigationState;
+  }
   if (state['communication.vhf.channel']) {
     data.vhf = state['communication.vhf.channel'];
   }

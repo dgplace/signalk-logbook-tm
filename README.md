@@ -66,6 +66,10 @@ The `datetime` field is stored with an explicit timezone offset for the configur
     direction: 283
   engine:
     hours: 405
+  navigationState: sailing
+  propulsion:
+    port:
+      state: stopped
   category: navigation
   text: Set 1st reef on mainsail
   author: bergie
@@ -109,8 +113,8 @@ The following SignalK paths are used by this logbook.
 |`navigation.log`|Log|`/log`||
 |`propulsion.*.runTime`|Engine|`/engine/hours`||
 |`steering.autopilot.state`|||Autopilot changes are logged.|
-|`navigation.state`|||If present, used to start and stop automated heartbeat entries. Changes are logged.|
-|`propulsion.*.state`|||Propulsion changes are logged.|
+|`navigation.state`|State|`/navigationState`|If present, used to start and stop automated heartbeat entries. Changes are logged. Copied onto each entry when published; never invented.|
+|`propulsion.*.state`|Engine state|`/propulsion/<id>/state`|Propulsion changes are logged. Copied onto each entry when published; omitted when unpublished.|
 |`communication.vhf.channel`||`/vhf`||
 |`navigation.courseRhumbline.nextPoint.position`||`/waypoint`||
 
@@ -173,6 +177,8 @@ Some additional ideas for the future:
 ## Changes
 
 * This repo
+  - Stamp live Signal K `propulsion.*.state` and `navigation.state` onto log entries as `propulsion` and `navigationState` (omitted when unpublished)
+  - Bump npm package version from `1.0.3` to `1.0.4` for release
   - Restrict npm publication contents to runtime plugin, webapp, and schema files
   - Bump npm package version from `1.0.2` to `1.0.3` for release
   - Add a two-minute automatic trigger for new minimum positive depth records while sailing or motoring

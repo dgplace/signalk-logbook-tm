@@ -3,6 +3,7 @@ const { test } = require('node:test');
 const {
   processTriggers,
   processTwoMinute,
+  processHourly,
 } = require('../plugin/triggers');
 
 /**
@@ -114,6 +115,80 @@ test('does not promote a depth that is not a new minimum', async () => {
   assert.equal(appendCount, 0);
   assert.equal(updates['custom.logbook.minDepthCandidate'], undefined);
   assert.equal(updates['custom.logbook.minDepth'], undefined);
+});
+
+test('logs a propulsion start when the vessel is not under way', async () => {
+  const entries = [];
+  const log = {
+    appendEntry(entry) {
+      entries.push(entry);
+      return Promise.resolve();
+    },
+  };
+  const state = {
+    'navigation.state': 'moored',
+    'propulsion.port.state': 'stopped',
+  };
+
+  await processTriggers(
+    'propulsion.port.state',
+    'started',
+    state,
+    log,
+    createApp(),
+  );
+
+  assert.equal(entries.length, 1);
+  assert.equal(entries[0].text, 'Started port engine');
+});
+
+test('logs a navigation.state transition from sailing to motoring', async () => {
+  const entries = [];
+  const log = {
+    appendEntry(entry) {
+      entries.push(entry);
+      return Promise.resolve();
+    },
+  };
+  const state = {
+    'navigation.state': 'sailing',
+  };
+
+  await processTriggers(
+    'navigation.state',
+    'motoring',
+    state,
+    log,
+    createApp(),
+  );
+
+  assert.equal(entries.length, 1);
+  assert.equal(entries[0].text, 'Sails down, motoring');
+  assert.equal(entries[0].navigationState, 'motoring');
+});
+
+test('heartbeat entries include stamped navigation and propulsion state', async () => {
+  const entries = [];
+  const log = {
+    appendEntry(entry) {
+      entries.push(entry);
+      return Promise.resolve();
+    },
+  };
+  const state = {
+    'navigation.state': 'sailing',
+    'propulsion.port.state': 'stopped',
+    'propulsion.port.runTime': 1458000,
+  };
+
+  await processHourly(state, log, createApp());
+
+  assert.equal(entries.length, 1);
+  assert.equal(entries[0].navigationState, 'sailing');
+  assert.deepEqual(entries[0].propulsion, {
+    port: { state: 'stopped' },
+  });
+  assert.equal(entries[0].engine.hours, 405);
 });
 
 test('resets the minimum depth record when a trip ends', async () => {

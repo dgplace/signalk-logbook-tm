@@ -24,7 +24,9 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 |---|---|
 | `plugin/index.js` | Main Signal K plugin entry point. Manages subscriptions, state buffer, periodic timers, dual read-only API routing (`registerWithRouter` + `signalKApiRoutes`), authenticated write routes, and plugin configuration schema. |
 | `plugin/triggers.js` | Event detection logic. `processTriggers()` handles per-update triggers; `processTwoMinute()` promotes maximum-value and minimum-depth candidates; `processHourly()` writes heartbeat entries. |
-| `plugin/format.js` | `stateToEntry()` converts the in-memory state object into a human-friendly log entry (degrees, knots, hPa, NM). |
+| `plugin/format.js` | `stateToEntry()` converts the in-memory state object into a human-friendly log entry (degrees, knots, hPa, NM). Copies present `navigation.state` and `propulsion.<id>.state` onto the entry; omits them when unpublished. |
+| `test/format.test.js` | Unit tests for `stateToEntry()`, including propulsion-only, navigation-only, and neither-present state stamping. |
+| `test/triggers.test.js` | Unit tests for automatic log triggers (depth records, propulsion/navigation transitions, heartbeat stamping). |
 | `plugin/Log.js` | `Log` class providing YAML-based persistence with JSON-Schema validation, file-per-day storage, and a write queue to serialise concurrent writes. |
 | `plugin/timezone.js` | Shared timezone helpers for validating IANA timezone IDs, formatting persisted datetimes with offsets, and deriving timezone-local day strings for file naming. |
 | `schema/openapi.yaml` | OpenAPI 3 spec for the logbook REST API. |
@@ -45,6 +47,8 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 ## Change Log
 
 ### Unreleased
+- **release: prepare version 1.0.4** &mdash; Bump the npm package version from `1.0.3` to `1.0.4` so track import can consume stamped propulsion and navigation state.
+- **feat: stamp live propulsion and navigation state on log entries** &mdash; Copy present Signal K `propulsion.<id>.state` and `navigation.state` onto each `stateToEntry()` result as `propulsion` (engine-id map of `{ state }`) and `navigationState`. Omit both when unpublished; never invent motoring/sailing. Leave `engine.hours` and existing propulsion/navigation transition logging unchanged. Document the fields in OpenAPI and README, and add format tests for propulsion-only, navigation-only, and neither-present.
 - **chore: restrict npm package contents** &mdash; Add an explicit runtime-file allowlist so published packages contain only plugin code, the built webapp, schemas, and npm's standard metadata instead of local settings, sample logs, tests, workflows, development files, or nested package archives.
 - **release: prepare version 1.0.3** &mdash; Bump the npm package version from `1.0.2` to `1.0.3` for the minimum-depth record release.
 - **feat: log new minimum depth records while under way** &mdash; Track the lowest positive `environment.depth.belowSurface` sample and promote it to an automatic log entry during the two-minute record check while sailing or motoring. Preserve the sampled depth and position, reset the record at trip end, document the trigger, and add focused regression coverage.
