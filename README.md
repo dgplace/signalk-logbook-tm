@@ -22,6 +22,10 @@ This plugin acts as a passerelle (bridge) for the macOS **Trip Report** applicat
 
 The macOS app handles trip aggregation and reporting locally.
 
+## GitHub installs
+
+Installing from git (for example `npm install github:dgplace/signalk-logbook-tm#CruiseReport`) does not run the npm publish build. `schema/openapi.json` is therefore committed in the repository, and `npm install` regenerates it via the `prepare` script using the runtime `yaml` dependency, so `plugin/Log.js` can `require` it without a prior `npm run build`.
+
 ## User interface
 
 The plugin provides a simplified read-only web interface as part of the [Signal K](https://signalk.org) administration interface. It shows:
@@ -177,6 +181,7 @@ Some additional ideas for the future:
 ## Changes
 
 * This repo
+  - Include `schema/openapi.json` in git and regenerate it during `npm install` (`prepare`) so GitHub/git plugin installs start without a prior `npm run build`
   - Stamp live Signal K `propulsion.*.state` and `navigation.state` onto log entries as `propulsion` and `navigationState` (omitted when unpublished)
   - Bump npm package version from `1.0.3` to `1.0.4` for release
   - Restrict npm publication contents to runtime plugin, webapp, and schema files
