@@ -27,10 +27,12 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 | `plugin/format.js` | `stateToEntry()` converts the in-memory state object into a human-friendly log entry (degrees, knots, hPa, NM). Copies present `navigation.state` and `propulsion.<id>.state` onto the entry; omits them when unpublished. |
 | `test/format.test.js` | Unit tests for `stateToEntry()`, including propulsion-only, navigation-only, and neither-present state stamping. |
 | `test/triggers.test.js` | Unit tests for automatic log triggers (depth records, propulsion/navigation transitions, heartbeat stamping). |
+| `test/openapi-json.test.js` | Packaging tests that `schema/openapi.json` exists, matches `schema/openapi.yaml`, and is not gitignored. |
 | `plugin/Log.js` | `Log` class providing YAML-based persistence with JSON-Schema validation, file-per-day storage, and a write queue to serialise concurrent writes. |
 | `plugin/timezone.js` | Shared timezone helpers for validating IANA timezone IDs, formatting persisted datetimes with offsets, and deriving timezone-local day strings for file naming. |
-| `schema/openapi.yaml` | OpenAPI 3 spec for the logbook REST API. |
-| `schema/openapi.json` | Auto-generated JSON version of the OpenAPI spec (built via `js-yaml`). |
+| `schema/openapi.yaml` | OpenAPI 3 spec for the logbook REST API (source of truth). |
+| `schema/openapi.json` | Generated JSON copy of the OpenAPI spec, committed so git/GitHub installs can `require` it without a prior build. |
+| `scripts/generate-openapi-json.js` | Converts `schema/openapi.yaml` to `schema/openapi.json` using the runtime `yaml` dependency. Runs from `prepare` and `prebuild`. |
 | `src/index.js` | React webapp entry point. |
 | `src/components/AppPanel.jsx` | Top-level app shell. Read-only overview with day summary table and map tabs. |
 | `src/components/Map.jsx` | Read-only Leaflet map view of log entry positions with vessel track (OpenStreetMap + OpenSeaMap tiles). |
@@ -47,6 +49,7 @@ Several triggers (course change, autopilot state, navigation state) update `oldS
 ## Change Log
 
 ### Unreleased
+- **fix: ship OpenAPI JSON for git/GitHub installs** &mdash; Stop gitignoring `schema/openapi.json`, commit the generated file, and add a `prepare` script that regenerates it with the runtime `yaml` dependency. Git installs (for example `npm install github:dgplace/signalk-logbook-tm#CruiseReport`) no longer fail at startup with `Cannot find module '../schema/openapi.json'`. Version stays `1.0.4` (unreleased packaging-only change; the npm tarball already included this file via `prepublishOnly`).
 - **release: prepare version 1.0.4** &mdash; Bump the npm package version from `1.0.3` to `1.0.4` so track import can consume stamped propulsion and navigation state.
 - **feat: stamp live propulsion and navigation state on log entries** &mdash; Copy present Signal K `propulsion.<id>.state` and `navigation.state` onto each `stateToEntry()` result as `propulsion` (engine-id map of `{ state }`) and `navigationState`. Omit both when unpublished; never invent motoring/sailing. Leave `engine.hours` and existing propulsion/navigation transition logging unchanged. Document the fields in OpenAPI and README, and add format tests for propulsion-only, navigation-only, and neither-present.
 - **chore: restrict npm package contents** &mdash; Add an explicit runtime-file allowlist so published packages contain only plugin code, the built webapp, schemas, and npm's standard metadata instead of local settings, sample logs, tests, workflows, development files, or nested package archives.

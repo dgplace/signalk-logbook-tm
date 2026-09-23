@@ -6,12 +6,14 @@
   "files": [
     "plugin/",
     "public/",
-    "schema/"
+    "schema/",
+    "scripts/generate-openapi-json.js"
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
+    "prepare": "node scripts/generate-openapi-json.js",
     "dev": "webpack --watch --mode=development",
-    "prebuild": "js-yaml schema/openapi.yaml > schema/openapi.json",
+    "prebuild": "node scripts/generate-openapi-json.js",
     "build": "webpack --mode=production",
     "swagger": "node scripts/swagger-local.js",
     "lint": "eslint *.js src/ plugin/ test/",
